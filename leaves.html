@@ -55,6 +55,11 @@ border-radius:15px;
 background:rgba(255,255,255,0.08);
 color:white;
 text-decoration:none;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
 }
 
 .main{
@@ -62,9 +67,24 @@ flex:1;
 padding:40px;
 }
 
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+}
+
 .topbar h1{
 font-size:56px;
-margin-bottom:35px;
+}
+
+.search-box{
+width:320px;
+padding:16px;
+border:none;
+border-radius:14px;
+font-size:16px;
+outline:none;
 }
 
 .summary-grid{
@@ -78,6 +98,12 @@ margin-bottom:30px;
 background:rgba(255,255,255,0.12);
 padding:25px;
 border-radius:20px;
+backdrop-filter:blur(10px);
+transition:0.3s;
+}
+
+.summary-card:hover{
+transform:translateY(-5px);
 }
 
 .summary-card h1{
@@ -90,6 +116,7 @@ background:rgba(255,255,255,0.12);
 padding:30px;
 border-radius:25px;
 margin-bottom:30px;
+backdrop-filter:blur(10px);
 }
 
 .form-grid{
@@ -101,6 +128,7 @@ gap:25px;
 label{
 display:block;
 margin-bottom:10px;
+font-size:15px;
 }
 
 input,select,textarea{
@@ -109,6 +137,12 @@ padding:18px;
 border:none;
 border-radius:14px;
 font-size:16px;
+outline:none;
+}
+
+textarea{
+min-height:120px;
+resize:none;
 }
 
 button{
@@ -120,6 +154,11 @@ cursor:pointer;
 font-size:16px;
 color:white;
 margin-right:10px;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.03);
 }
 
 .save-btn{
@@ -134,15 +173,32 @@ background:#4dabf7;
 background:#ff4d6d;
 }
 
+.delete-btn{
+background:#ff6b6b;
+}
+
+.export-btn{
+background:#845ef7;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:20px;
 }
 
 th,td{
 padding:18px;
 text-align:left;
 border-top:1px solid rgba(255,255,255,0.08);
+}
+
+tr{
+transition:0.3s;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
 }
 
 .pending{
@@ -158,6 +214,68 @@ font-weight:bold;
 .rejected{
 color:#ff4d6d;
 font-weight:bold;
+}
+
+.badge{
+padding:8px 14px;
+border-radius:30px;
+font-size:13px;
+display:inline-block;
+}
+
+.activity-box{
+margin-top:25px;
+}
+
+.activity-item{
+padding:16px;
+margin-top:12px;
+background:rgba(255,255,255,0.08);
+border-radius:14px;
+}
+
+@media(max-width:1200px){
+
+.summary-grid{
+grid-template-columns:1fr 1fr;
+}
+
+}
+
+@media(max-width:900px){
+
+.container{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+min-height:auto;
+}
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.summary-grid{
+grid-template-columns:1fr;
+}
+
+.topbar{
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+}
+
+.search-box{
+width:100%;
+}
+
+table{
+display:block;
+overflow-x:auto;
+}
+
 }
 
 </style>
@@ -233,6 +351,13 @@ onclick="ERPAuth.logout()">
 
 <h1>Leave Management</h1>
 
+<input
+type="text"
+class="search-box"
+id="searchInput"
+placeholder="Search Employee..."
+onkeyup="searchLeaves()">
+
 </div>
 
 <div class="summary-grid">
@@ -290,6 +415,8 @@ Leave Type
 <option>Sick Leave</option>
 <option>Casual Leave</option>
 <option>Paid Leave</option>
+<option>Maternity Leave</option>
+<option>Emergency Leave</option>
 
 </select>
 
@@ -342,13 +469,19 @@ Apply Leave
 
 </button>
 
+<button
+class="export-btn"
+onclick="exportLeaves()">
+
+Export JSON
+
+</button>
+
 </div>
 
 <div class="card">
 
 <h2>Leave Requests</h2>
-
-<br>
 
 <table id="leaveTable">
 
@@ -357,12 +490,18 @@ Apply Leave
 <th>Employee</th>
 <th>Type</th>
 <th>Dates</th>
+<th>Days</th>
 <th>Status</th>
 <th>Actions</th>
 
 </tr>
 
 </table>
+
+<div class="activity-box"
+id="activityBox">
+
+</div>
 
 </div>
 
@@ -408,33 +547,65 @@ localStorage.getItem(
 
 function applyLeave(){
 
-const leave = {
-
-name:
+const name =
 document.getElementById(
 "empName"
-).value,
+).value;
 
-type:
+const type =
 document.getElementById(
 "leaveType"
-).value,
+).value;
 
-start:
+const start =
 document.getElementById(
 "startDate"
-).value,
+).value;
 
-end:
+const end =
 document.getElementById(
 "endDate"
-).value,
+).value;
 
-reason:
+const reason =
 document.getElementById(
 "leaveReason"
-).value,
+).value;
 
+if(
+name === "" ||
+start === "" ||
+end === ""
+){
+
+alert(
+"Please Fill All Fields"
+);
+
+return;
+
+}
+
+const startDate =
+new Date(start);
+
+const endDate =
+new Date(end);
+
+const days =
+Math.ceil(
+(endDate - startDate)
+/ (1000*60*60*24)
+) + 1;
+
+const leave = {
+
+name,
+type,
+start,
+end,
+reason,
+days,
 status:"Pending"
 
 };
@@ -446,13 +617,17 @@ localStorage.setItem(
 JSON.stringify(leaves)
 );
 
+addActivity(
+name + " applied for leave"
+);
+
 renderLeaves();
 
 clearForm();
 
 }
 
-function renderLeaves(){
+function renderLeaves(filteredLeaves = leaves){
 
 const table =
 document.getElementById(
@@ -460,22 +635,25 @@ document.getElementById(
 );
 
 table.innerHTML = `
+
 <tr>
 
 <th>Employee</th>
 <th>Type</th>
 <th>Dates</th>
+<th>Days</th>
 <th>Status</th>
 <th>Actions</th>
 
 </tr>
+
 `;
 
 let approved = 0;
 let pending = 0;
 let rejected = 0;
 
-leaves.forEach((leave,index)=>{
+filteredLeaves.forEach((leave,index)=>{
 
 if(leave.status === "Approved"){
 approved++;
@@ -517,8 +695,14 @@ to
 ${leave.end}
 </td>
 
-<td class="${statusClass}">
+<td>${leave.days}</td>
+
+<td>
+
+<span class="badge ${statusClass}">
 ${leave.status}
+</span>
+
 </td>
 
 <td>
@@ -536,6 +720,14 @@ class="reject-btn"
 onclick="rejectLeave(${index})">
 
 Reject
+
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteLeave(${index})">
+
+Delete
 
 </button>
 
@@ -579,6 +771,11 @@ localStorage.setItem(
 JSON.stringify(leaves)
 );
 
+addActivity(
+leaves[index].name +
+" leave approved"
+);
+
 renderLeaves();
 
 }
@@ -593,7 +790,110 @@ localStorage.setItem(
 JSON.stringify(leaves)
 );
 
+addActivity(
+leaves[index].name +
+" leave rejected"
+);
+
 renderLeaves();
+
+}
+
+function deleteLeave(index){
+
+if(
+confirm(
+"Delete Leave Request?"
+)
+){
+
+addActivity(
+leaves[index].name +
+" leave deleted"
+);
+
+leaves.splice(index,1);
+
+localStorage.setItem(
+"leaves",
+JSON.stringify(leaves)
+);
+
+renderLeaves();
+
+}
+
+}
+
+function searchLeaves(){
+
+const value =
+document.getElementById(
+"searchInput"
+).value.toLowerCase();
+
+const filtered =
+leaves.filter((leave)=>{
+
+return leave.name
+.toLowerCase()
+.includes(value);
+
+});
+
+renderLeaves(filtered);
+
+}
+
+function exportLeaves(){
+
+const dataStr =
+"data:text/json;charset=utf-8," +
+
+encodeURIComponent(
+JSON.stringify(leaves,null,2)
+);
+
+const downloadAnchor =
+document.createElement("a");
+
+downloadAnchor.setAttribute(
+"href",
+dataStr
+);
+
+downloadAnchor.setAttribute(
+"download",
+"leave-data.json"
+);
+
+document.body.appendChild(
+downloadAnchor
+);
+
+downloadAnchor.click();
+
+downloadAnchor.remove();
+
+addActivity(
+"Leave JSON exported"
+);
+
+}
+
+function addActivity(message){
+
+document.getElementById(
+"activityBox"
+).innerHTML += `
+
+<div class="activity-item">
+
+${message}
+
+</div>
+
+`;
 
 }
 
