@@ -144,7 +144,7 @@ font-weight:bold;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -153,7 +153,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -302,6 +302,7 @@ Save Attendance
 window.onload = function(){
 
 loadTheme();
+renderAttendance();
 
 };
 
@@ -329,8 +330,6 @@ JSON.parse(
 localStorage.getItem("attendance")
 ) || [];
 
-renderAttendance();
-
 function addAttendance(){
 
 const empName =
@@ -344,6 +343,15 @@ document.getElementById("attendanceStatus").value;
 
 const ot =
 document.getElementById("otHours").value;
+
+if(
+empName === "" ||
+date === "" ||
+status === ""
+){
+alert("Please fill all fields");
+return;
+}
 
 attendance.push({
 empName,
@@ -393,7 +401,7 @@ present++;
 absent++;
 }
 
-totalOT += Number(record.ot);
+totalOT += Number(record.ot || 0);
 
 table.innerHTML += `
 
