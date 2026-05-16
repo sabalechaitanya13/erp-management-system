@@ -159,7 +159,7 @@ font-weight:bold;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -168,7 +168,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -190,23 +190,14 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
 <a href="#"
@@ -341,6 +332,7 @@ Export JSON
 window.onload = function(){
 
 loadTheme();
+renderExpenses();
 
 };
 
@@ -370,8 +362,6 @@ localStorage.getItem("expenses")
 
 let editIndex = -1;
 
-renderExpenses();
-
 function addExpense(){
 
 const title =
@@ -393,6 +383,13 @@ const status =
 document.getElementById(
 "expenseStatus"
 ).value;
+
+if(title === "" || amount === ""){
+
+alert("Please fill all fields");
+return;
+
+}
 
 const expenseData = {
 
@@ -453,7 +450,7 @@ let pending = 0;
 expenses.forEach((expense,index)=>{
 
 total +=
-Number(expense.amount);
+Number(expense.amount || 0);
 
 if(expense.status === "Approved"){
 approved++;
@@ -584,30 +581,48 @@ renderExpenses();
 
 }
 
+function clearForm(){
+
+document.getElementById(
+"expenseTitle"
+).value = "";
+
+document.getElementById(
+"expenseAmount"
+).value = "";
+
+document.getElementById(
+"expenseStatus"
+).value = "Pending";
+
+}
+
 function exportExpenses(){
 
 const dataStr =
-"data:text/json;charset=utf-8," +
+JSON.stringify(expenses,null,2);
 
-encodeURIComponent(
-JSON.stringify(expenses,null,2)
-);
+const blob =
+new Blob([dataStr],
+{type:"application/json"});
 
-const downloadAnchor =
+const url =
+URL.createObjectURL(blob);
+
+const a =
 document.createElement("a");
 
-downloadAnchor.setAttribute(
-"href",
-dataStr
-);
+a.href = url;
 
-downloadAnchor.setAttribute(
-"download",
-"expenses.json"
-);
+a.download =
+"expenses.json";
 
-document.body.appendChild(
-downloadAnchor
-);
+a.click();
 
-downloadAnchor.click();
+}
+
+</script>
+
+</body>
+
+</html>
