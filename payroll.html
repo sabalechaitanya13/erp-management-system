@@ -1,3 +1,5 @@
+<!-- leaves.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,9 +10,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Payroll Management</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>Leave Management</title>
 
 <style>
 
@@ -25,11 +25,6 @@ body{
 background:linear-gradient(135deg,#667eea,#764ba2);
 min-height:100vh;
 color:white;
-transition:0.3s;
-}
-
-.dark-mode{
-background:linear-gradient(135deg,#111,#222);
 }
 
 .container{
@@ -57,11 +52,6 @@ border-radius:15px;
 background:rgba(255,255,255,0.08);
 color:white;
 text-decoration:none;
-transition:0.3s;
-}
-
-.menu a:hover{
-background:rgba(255,255,255,0.18);
 }
 
 .main{
@@ -72,24 +62,6 @@ padding:40px;
 .topbar h1{
 font-size:56px;
 margin-bottom:35px;
-}
-
-.summary-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:20px;
-margin-bottom:30px;
-}
-
-.summary-card{
-background:rgba(255,255,255,0.12);
-padding:25px;
-border-radius:20px;
-}
-
-.summary-card h1{
-font-size:42px;
-margin-top:10px;
 }
 
 .card{
@@ -105,12 +77,7 @@ grid-template-columns:1fr 1fr;
 gap:25px;
 }
 
-label{
-display:block;
-margin-bottom:10px;
-}
-
-input{
+input,select{
 width:100%;
 padding:18px;
 border:none;
@@ -127,11 +94,6 @@ background:#57cc99;
 color:white;
 cursor:pointer;
 font-size:16px;
-margin-right:10px;
-}
-
-.export-btn{
-background:#4dabf7;
 }
 
 table{
@@ -141,59 +103,26 @@ border-collapse:collapse;
 
 th,td{
 padding:18px;
-text-align:left;
 border-top:1px solid rgba(255,255,255,0.08);
 }
 
-.salary-slip{
-background:white;
-color:black;
-padding:40px;
-border-radius:25px;
-margin-top:30px;
+.pending{
+color:#ffd43b;
 }
 
-.salary-slip h1{
-margin-bottom:20px;
+.approved{
+color:#57cc99;
 }
 
-.salary-slip p{
-margin-bottom:10px;
-font-size:18px;
-}
-
-.net-salary{
-font-size:32px;
-font-weight:bold;
-color:green;
-margin-top:20px;
+.rejected{
+color:#ff4d6d;
 }
 
 </style>
 
 </head>
 
-<body id="body" style="display:none;">
-
-<script src="../js/auth.js"></script>
-
-<script>
-
-if(
-!ERPAuth.isAuthenticated()
-){
-
-window.location.href =
-"login.html";
-
-}else{
-
-document.body.style.display =
-"block";
-
-}
-
-</script>
+<body>
 
 <div class="container">
 
@@ -206,31 +135,15 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
-
-<a href="#"
-onclick="ERPAuth.logout()">
-
-🚪 Logout
-
-</a>
 
 </div>
 
@@ -240,143 +153,82 @@ onclick="ERPAuth.logout()">
 
 <div class="topbar">
 
-<h1>Payroll Management</h1>
-
-</div>
-
-<div class="summary-grid">
-
-<div class="summary-card">
-<h2>Total Payroll</h2>
-<h1 id="totalPayroll">₹0</h1>
-</div>
-
-<div class="summary-card">
-<h2>Total Employees</h2>
-<h1 id="employeeCount">0</h1>
-</div>
-
-<div class="summary-card">
-<h2>Total Bonus</h2>
-<h1 id="bonusTotal">₹0</h1>
-</div>
-
-<div class="summary-card">
-<h2>Total OT</h2>
-<h1 id="otTotal">₹0</h1>
-</div>
+<h1>Leave Management</h1>
 
 </div>
 
 <div class="card">
 
-<h2>Create Salary Slip</h2>
+<h2>Apply Leave</h2>
 
 <br>
 
 <div class="form-grid">
 
 <div>
+
 <label>Employee Name</label>
-<input type="text" id="empName">
+
+<input type="text"
+id="leaveName">
+
 </div>
 
 <div>
-<label>Department</label>
-<input type="text" id="empDept">
+
+<label>Leave Type</label>
+
+<select id="leaveType">
+
+<option>Sick Leave</option>
+<option>Casual Leave</option>
+<option>Emergency Leave</option>
+
+</select>
+
 </div>
 
 <div>
-<label>Basic Salary</label>
-<input type="number" id="basicSalary">
+
+<label>From Date</label>
+
+<input type="date"
+id="fromDate">
+
 </div>
 
 <div>
-<label>OT Amount</label>
-<input type="number" id="otAmount">
-</div>
 
-<div>
-<label>Bonus</label>
-<input type="number" id="bonus">
-</div>
+<label>To Date</label>
 
-<div>
-<label>Deductions</label>
-<input type="number" id="deductions">
+<input type="date"
+id="toDate">
+
 </div>
 
 </div>
 
-<button onclick="generateSlip()">
-Generate Salary Slip
+<button onclick="applyLeave()">
+
+Apply Leave
+
 </button>
-
-<button
-class="export-btn"
-onclick="downloadPDF()">
-
-Download PDF
-
-</button>
-
-</div>
-
-<div class="salary-slip"
-id="salarySlip">
-
-<h1>Salary Slip</h1>
-
-<p>
-<strong>Employee:</strong>
-<span id="slipName"></span>
-</p>
-
-<p>
-<strong>Department:</strong>
-<span id="slipDept"></span>
-</p>
-
-<p>
-<strong>Basic Salary:</strong>
-₹<span id="slipBasic"></span>
-</p>
-
-<p>
-<strong>OT Amount:</strong>
-₹<span id="slipOT"></span>
-</p>
-
-<p>
-<strong>Bonus:</strong>
-₹<span id="slipBonus"></span>
-</p>
-
-<p>
-<strong>Deductions:</strong>
-₹<span id="slipDeduction"></span>
-</p>
-
-<div class="net-salary">
-
-Net Salary:
-₹<span id="slipNetSalary"></span>
-
-</div>
 
 </div>
 
 <div class="card">
 
-<h2>Payroll History</h2>
+<h2>Leave Records</h2>
 
-<table id="payrollTable">
+<table id="leaveTable">
 
 <tr>
 
 <th>Employee</th>
-<th>Department</th>
-<th>Net Salary</th>
+<th>Type</th>
+<th>From</th>
+<th>To</th>
+<th>Status</th>
 <th>Actions</th>
 
 </tr>
@@ -391,181 +243,123 @@ Net Salary:
 
 <script>
 
-window.onload = function(){
-
-loadTheme();
-
-};
-
-function loadTheme(){
-
-const darkMode =
-localStorage.getItem(
-"darkMode"
-);
-
-if(darkMode === "true"){
-
-document.getElementById(
-"body"
-).classList.add(
-"dark-mode"
-);
-
-}
-
-}
-
-let payrollHistory =
+let leaves =
 JSON.parse(
 localStorage.getItem(
-"payrollHistory"
+"leaves"
 )
 ) || [];
 
-renderPayroll();
+renderLeaves();
 
-function generateSlip(){
+function applyLeave(){
 
 const name =
 document.getElementById(
-"empName"
+"leaveName"
 ).value;
 
-const dept =
+const type =
 document.getElementById(
-"empDept"
+"leaveType"
 ).value;
 
-const basic =
-Number(
+const from =
 document.getElementById(
-"basicSalary"
-).value
-);
+"fromDate"
+).value;
 
-const ot =
-Number(
+const to =
 document.getElementById(
-"otAmount"
-).value
-);
+"toDate"
+).value;
 
-const bonus =
-Number(
-document.getElementById(
-"bonus"
-).value
-);
-
-const deduction =
-Number(
-document.getElementById(
-"deductions"
-).value
-);
-
-const netSalary =
-basic + ot + bonus - deduction;
-
-document.getElementById(
-"slipName"
-).innerText = name;
-
-document.getElementById(
-"slipDept"
-).innerText = dept;
-
-document.getElementById(
-"slipBasic"
-).innerText = basic;
-
-document.getElementById(
-"slipOT"
-).innerText = ot;
-
-document.getElementById(
-"slipBonus"
-).innerText = bonus;
-
-document.getElementById(
-"slipDeduction"
-).innerText = deduction;
-
-document.getElementById(
-"slipNetSalary"
-).innerText = netSalary;
-
-payrollHistory.push({
+leaves.push({
 
 name,
-dept,
-basic,
-ot,
-bonus,
-deduction,
-netSalary
+type,
+from,
+to,
+status:"Pending"
 
 });
 
 localStorage.setItem(
-"payrollHistory",
-JSON.stringify(payrollHistory)
+"leaves",
+JSON.stringify(leaves)
 );
 
-renderPayroll();
+renderLeaves();
 
 }
 
-function renderPayroll(){
+function renderLeaves(){
 
 const table =
 document.getElementById(
-"payrollTable"
+"leaveTable"
 );
 
 table.innerHTML = `
+
 <tr>
 
 <th>Employee</th>
-<th>Department</th>
-<th>Net Salary</th>
+<th>Type</th>
+<th>From</th>
+<th>To</th>
+<th>Status</th>
 <th>Actions</th>
 
 </tr>
+
 `;
 
-let totalPayroll = 0;
-let totalBonus = 0;
-let totalOT = 0;
+leaves.forEach((leave,index)=>{
 
-payrollHistory.forEach((payroll,index)=>{
+let statusClass = "";
 
-totalPayroll +=
-payroll.netSalary;
+if(leave.status === "Pending"){
+statusClass = "pending";
+}
 
-totalBonus +=
-payroll.bonus;
+if(leave.status === "Approved"){
+statusClass = "approved";
+}
 
-totalOT +=
-payroll.ot;
+if(leave.status === "Rejected"){
+statusClass = "rejected";
+}
 
 table.innerHTML += `
 
 <tr>
 
-<td>${payroll.name}</td>
+<td>${leave.name}</td>
 
-<td>${payroll.dept}</td>
+<td>${leave.type}</td>
 
-<td>₹${payroll.netSalary}</td>
+<td>${leave.from}</td>
+
+<td>${leave.to}</td>
+
+<td class="${statusClass}">
+${leave.status}
+</td>
 
 <td>
 
 <button
-onclick="deletePayroll(${index})">
+onclick="approveLeave(${index})">
 
-Delete
+Approve
+
+</button>
+
+<button
+onclick="rejectLeave(${index})">
+
+Reject
 
 </button>
 
@@ -577,51 +371,33 @@ Delete
 
 });
 
-document.getElementById(
-"totalPayroll"
-).innerText =
-"₹" + totalPayroll;
-
-document.getElementById(
-"employeeCount"
-).innerText =
-payrollHistory.length;
-
-document.getElementById(
-"bonusTotal"
-).innerText =
-"₹" + totalBonus;
-
-document.getElementById(
-"otTotal"
-).innerText =
-"₹" + totalOT;
-
 }
 
-function deletePayroll(index){
+function approveLeave(index){
 
-payrollHistory.splice(index,1);
+leaves[index].status =
+"Approved";
 
 localStorage.setItem(
-"payrollHistory",
-JSON.stringify(payrollHistory)
+"leaves",
+JSON.stringify(leaves)
 );
 
-renderPayroll();
+renderLeaves();
 
 }
 
-function downloadPDF(){
+function rejectLeave(index){
 
-const element =
-document.getElementById(
-"salarySlip"
+leaves[index].status =
+"Rejected";
+
+localStorage.setItem(
+"leaves",
+JSON.stringify(leaves)
 );
 
-html2pdf()
-.from(element)
-.save("salary-slip.pdf");
+renderLeaves();
 
 }
 
