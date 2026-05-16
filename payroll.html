@@ -4,15 +4,13 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ERP Payroll Management</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Payroll Management</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -20,68 +18,49 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:Arial,sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#4f46e5,#7c3aed,#0ea5e9);
-background-size:400% 400%;
-animation:bgMove 15s ease infinite;
+background:linear-gradient(135deg,#667eea,#764ba2);
 min-height:100vh;
 color:white;
-overflow-x:hidden;
-}
-
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+transition:0.3s;
 }
 
 .dark-mode{
-background:linear-gradient(135deg,#050505,#111827,#000);
+background:linear-gradient(135deg,#111,#222);
 }
 
 .container{
 display:flex;
-min-height:100vh;
 }
 
 .sidebar{
-width:290px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-padding:25px;
-position:sticky;
-top:0;
-height:100vh;
-border-right:1px solid rgba(255,255,255,0.1);
+width:300px;
+min-height:100vh;
+background:rgba(0,0,0,0.15);
+padding:20px;
 }
 
 .logo{
-font-size:34px;
-font-weight:700;
+font-size:42px;
+font-weight:bold;
 margin-bottom:40px;
-letter-spacing:1px;
 }
 
 .menu a{
-display:flex;
-align-items:center;
-gap:12px;
-padding:16px;
+display:block;
+padding:18px;
 margin-bottom:14px;
-border-radius:18px;
+border-radius:15px;
 background:rgba(255,255,255,0.08);
 color:white;
 text-decoration:none;
 transition:0.3s;
-font-size:15px;
-font-weight:500;
 }
 
 .menu a:hover{
-transform:translateX(8px);
 background:rgba(255,255,255,0.18);
 }
 
@@ -90,224 +69,140 @@ flex:1;
 padding:40px;
 }
 
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:35px;
-flex-wrap:wrap;
-gap:20px;
-}
-
 .topbar h1{
-font-size:52px;
-font-weight:700;
-}
-
-.top-actions{
-display:flex;
-gap:15px;
+font-size:56px;
+margin-bottom:20px;
 }
 
 .search-box{
-padding:16px 20px;
+width:300px;
+padding:16px;
 border:none;
-border-radius:16px;
-width:280px;
-font-size:15px;
-outline:none;
-background:rgba(255,255,255,0.15);
-color:white;
-backdrop-filter:blur(12px);
-}
-
-.search-box::placeholder{
-color:#ddd;
+border-radius:14px;
+margin-bottom:30px;
+font-size:16px;
 }
 
 .summary-grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:22px;
-margin-bottom:35px;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
 }
 
 .summary-card{
-background:rgba(255,255,255,0.1);
-backdrop-filter:blur(18px);
-padding:28px;
-border-radius:24px;
-transition:0.4s;
-border:1px solid rgba(255,255,255,0.08);
-}
-
-.summary-card:hover{
-transform:translateY(-8px);
-}
-
-.summary-card h2{
-font-size:17px;
-font-weight:500;
-opacity:0.9;
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:20px;
 }
 
 .summary-card h1{
 font-size:42px;
-margin-top:12px;
+margin-top:10px;
 }
 
 .card{
-background:rgba(255,255,255,0.1);
-backdrop-filter:blur(18px);
-padding:35px;
-border-radius:28px;
-margin-bottom:35px;
-border:1px solid rgba(255,255,255,0.08);
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+margin-bottom:30px;
 }
 
 .form-grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:24px;
+grid-template-columns:1fr 1fr;
+gap:25px;
 }
 
 label{
 display:block;
 margin-bottom:10px;
-font-size:15px;
-font-weight:500;
 }
 
 input{
 width:100%;
-padding:16px;
+padding:18px;
 border:none;
-border-radius:16px;
-font-size:15px;
-background:rgba(255,255,255,0.14);
-color:white;
-outline:none;
-}
-
-input::placeholder{
-color:#ddd;
+border-radius:14px;
+font-size:16px;
 }
 
 button{
 margin-top:25px;
 padding:16px 28px;
 border:none;
-border-radius:16px;
-background:#22c55e;
+border-radius:14px;
+background:#57cc99;
 color:white;
 cursor:pointer;
-font-size:15px;
-font-weight:600;
-transition:0.3s;
-margin-right:12px;
-}
-
-button:hover{
-transform:scale(1.05);
+font-size:16px;
+margin-right:10px;
 }
 
 .export-btn{
-background:#0ea5e9;
-}
-
-.theme-btn{
-background:#8b5cf6;
-}
-
-.delete-btn{
-background:#ef4444;
+background:#4dabf7;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:20px;
-overflow:hidden;
-border-radius:20px;
-}
-
-th{
-background:rgba(255,255,255,0.15);
-font-weight:600;
 }
 
 th,td{
 padding:18px;
 text-align:left;
-}
-
-tr{
-border-bottom:1px solid rgba(255,255,255,0.08);
-transition:0.3s;
-}
-
-tr:hover{
-background:rgba(255,255,255,0.05);
+border-top:1px solid rgba(255,255,255,0.08);
 }
 
 .salary-slip{
 background:white;
 color:black;
-padding:45px;
-border-radius:28px;
+padding:40px;
+border-radius:25px;
 margin-top:30px;
 }
 
 .salary-slip h1{
 margin-bottom:20px;
-font-size:36px;
 }
 
 .salary-slip p{
-margin-bottom:14px;
+margin-bottom:10px;
 font-size:18px;
 }
 
 .net-salary{
-font-size:34px;
+font-size:32px;
 font-weight:bold;
-color:#16a34a;
-margin-top:25px;
-}
-
-.date-box{
-margin-top:15px;
-font-size:16px;
-color:#555;
-}
-
-@media(max-width:1000px){
-
-.container{
-flex-direction:column;
-}
-
-.sidebar{
-width:100%;
-height:auto;
-position:relative;
-}
-
-.main{
-padding:20px;
-}
-
-.topbar h1{
-font-size:38px;
-}
-
+color:green;
+margin-top:20px;
 }
 
 </style>
 
 </head>
 
-<body id="body">
+<body id="body" style="display:none;">
+
+<script src="../js/auth.js"></script>
+
+<script>
+
+if(
+!ERPAuth.isAuthenticated()
+){
+
+window.location.href =
+"login.html";
+
+}else{
+
+document.body.style.display =
+"block";
+
+}
+
+</script>
 
 <div class="container">
 
@@ -320,15 +215,31 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
+
 <a href="employees.html">👥 Employees</a>
+
 <a href="attendance.html">🕒 Attendance</a>
-<a href="leaves.html">🏖 Leaves</a>
+
+<a href="leaves.html">🏖 Leave Management</a>
+
 <a href="payroll.html">💰 Payroll</a>
+
 <a href="inventory.html">📦 Inventory</a>
+
 <a href="purchase.html">🛒 Purchase</a>
+
 <a href="expenses.html">💳 Expenses</a>
+
 <a href="reports.html">📈 Reports</a>
+
 <a href="settings.html">⚙️ Settings</a>
+
+<a href="#"
+onclick="ERPAuth.logout()">
+
+🚪 Logout
+
+</a>
 
 </div>
 
@@ -340,26 +251,14 @@ ERP System
 
 <h1>Payroll Management</h1>
 
-<div class="top-actions">
+</div>
 
 <input
 type="text"
+id="searchPayroll"
 class="search-box"
 placeholder="Search Employee..."
-id="searchInput"
 onkeyup="searchPayroll()">
-
-<button
-class="theme-btn"
-onclick="toggleTheme()">
-
-Toggle Theme
-
-</button>
-
-</div>
-
-</div>
 
 <div class="summary-grid">
 
@@ -426,7 +325,7 @@ Toggle Theme
 </div>
 
 <button onclick="generateSlip()">
-Generate Slip
+Generate Salary Slip
 </button>
 
 <button
@@ -439,26 +338,51 @@ Download PDF
 
 </div>
 
-<div class="salary-slip" id="salarySlip">
+<div class="salary-slip"
+id="salarySlip">
 
 <h1>Salary Slip</h1>
 
-<div class="date-box" id="slipDate"></div>
+<p>
+<strong>Employee:</strong>
+<span id="slipName"></span>
+</p>
 
-<p><strong>Employee:</strong> <span id="slipName"></span></p>
+<p>
+<strong>Department:</strong>
+<span id="slipDept"></span>
+</p>
 
-<p><strong>Department:</strong> <span id="slipDept"></span></p>
+<p>
+<strong>Date:</strong>
+<span id="slipDate"></span>
+</p>
 
-<p><strong>Basic Salary:</strong> ₹<span id="slipBasic"></span></p>
+<p>
+<strong>Basic Salary:</strong>
+₹<span id="slipBasic"></span>
+</p>
 
-<p><strong>OT Amount:</strong> ₹<span id="slipOT"></span></p>
+<p>
+<strong>OT Amount:</strong>
+₹<span id="slipOT"></span>
+</p>
 
-<p><strong>Bonus:</strong> ₹<span id="slipBonus"></span></p>
+<p>
+<strong>Bonus:</strong>
+₹<span id="slipBonus"></span>
+</p>
 
-<p><strong>Deductions:</strong> ₹<span id="slipDeduction"></span></p>
+<p>
+<strong>Deductions:</strong>
+₹<span id="slipDeduction"></span>
+</p>
 
 <div class="net-salary">
-Net Salary: ₹<span id="slipNetSalary"></span>
+
+Net Salary:
+₹<span id="slipNetSalary"></span>
+
 </div>
 
 </div>
@@ -470,11 +394,13 @@ Net Salary: ₹<span id="slipNetSalary"></span>
 <table id="payrollTable">
 
 <tr>
+
 <th>Employee</th>
 <th>Department</th>
 <th>Net Salary</th>
 <th>Date</th>
 <th>Actions</th>
+
 </tr>
 
 </table>
@@ -487,54 +413,135 @@ Net Salary: ₹<span id="slipNetSalary"></span>
 
 <script>
 
+window.onload = function(){
+
+loadTheme();
+
+};
+
+function loadTheme(){
+
+const darkMode =
+localStorage.getItem(
+"darkMode"
+);
+
+if(darkMode === "true"){
+
+document.getElementById(
+"body"
+).classList.add(
+"dark-mode"
+);
+
+}
+
+}
+
 let payrollHistory =
-JSON.parse(localStorage.getItem("payrollHistory")) || [];
+JSON.parse(
+localStorage.getItem(
+"payrollHistory"
+)
+) || [];
 
 let editIndex = -1;
 
-window.onload = () => {
-
-loadTheme();
 renderPayroll();
-
-};
 
 function generateSlip(){
 
 const name =
-document.getElementById("empName").value;
+document.getElementById(
+"empName"
+).value.trim();
 
 const dept =
-document.getElementById("empDept").value;
+document.getElementById(
+"empDept"
+).value.trim();
 
 const basic =
-Number(document.getElementById("basicSalary").value);
+Number(
+document.getElementById(
+"basicSalary"
+).value
+);
 
 const ot =
-Number(document.getElementById("otAmount").value);
+Number(
+document.getElementById(
+"otAmount"
+).value
+);
 
 const bonus =
-Number(document.getElementById("bonus").value);
+Number(
+document.getElementById(
+"bonus"
+).value
+);
 
 const deduction =
-Number(document.getElementById("deductions").value);
+Number(
+document.getElementById(
+"deductions"
+).value
+);
+
+if(
+name === "" ||
+dept === "" ||
+basic <= 0
+){
+
+alert(
+"Please Fill All Required Fields"
+);
+
+return;
+
+}
 
 const netSalary =
 basic + ot + bonus - deduction;
 
-const date =
+const currentDate =
 new Date().toLocaleDateString();
 
-document.getElementById("slipName").innerText = name;
-document.getElementById("slipDept").innerText = dept;
-document.getElementById("slipBasic").innerText = basic;
-document.getElementById("slipOT").innerText = ot;
-document.getElementById("slipBonus").innerText = bonus;
-document.getElementById("slipDeduction").innerText = deduction;
-document.getElementById("slipNetSalary").innerText = netSalary;
-document.getElementById("slipDate").innerText = "Generated: " + date;
+document.getElementById(
+"slipName"
+).innerText = name;
 
-const payroll = {
+document.getElementById(
+"slipDept"
+).innerText = dept;
+
+document.getElementById(
+"slipDate"
+).innerText = currentDate;
+
+document.getElementById(
+"slipBasic"
+).innerText = basic;
+
+document.getElementById(
+"slipOT"
+).innerText = ot;
+
+document.getElementById(
+"slipBonus"
+).innerText = bonus;
+
+document.getElementById(
+"slipDeduction"
+).innerText = deduction;
+
+document.getElementById(
+"slipNetSalary"
+).innerText = netSalary;
+
+const payrollData = {
 
 name,
 dept,
@@ -543,17 +550,21 @@ ot,
 bonus,
 deduction,
 netSalary,
-date
+currentDate
 
 };
 
 if(editIndex === -1){
 
-payrollHistory.push(payroll);
+payrollHistory.push(
+payrollData
+);
 
 }else{
 
-payrollHistory[editIndex] = payroll;
+payrollHistory[editIndex] =
+payrollData;
+
 editIndex = -1;
 
 }
@@ -565,23 +576,27 @@ JSON.stringify(payrollHistory)
 
 renderPayroll();
 
+clearForm();
+
 }
 
 function renderPayroll(){
 
 const table =
-document.getElementById("payrollTable");
+document.getElementById(
+"payrollTable"
+);
 
 table.innerHTML = `
-
 <tr>
+
 <th>Employee</th>
 <th>Department</th>
 <th>Net Salary</th>
 <th>Date</th>
 <th>Actions</th>
-</tr>
 
+</tr>
 `;
 
 let totalPayroll = 0;
@@ -590,9 +605,14 @@ let totalOT = 0;
 
 payrollHistory.forEach((payroll,index)=>{
 
-totalPayroll += payroll.netSalary;
-totalBonus += payroll.bonus;
-totalOT += payroll.ot;
+totalPayroll +=
+payroll.netSalary;
+
+totalBonus +=
+payroll.bonus;
+
+totalOT +=
+payroll.ot;
 
 table.innerHTML += `
 
@@ -604,16 +624,18 @@ table.innerHTML += `
 
 <td>₹${payroll.netSalary}</td>
 
-<td>${payroll.date}</td>
+<td>${payroll.currentDate}</td>
 
 <td>
 
-<button onclick="editPayroll(${index})">
+<button
+onclick="editPayroll(${index})">
+
 Edit
+
 </button>
 
 <button
-class="delete-btn"
 onclick="deletePayroll(${index})">
 
 Delete
@@ -628,30 +650,62 @@ Delete
 
 });
 
-document.getElementById("totalPayroll").innerText =
+document.getElementById(
+"totalPayroll"
+).innerText =
 "₹" + totalPayroll;
 
-document.getElementById("employeeCount").innerText =
+document.getElementById(
+"employeeCount"
+).innerText =
 payrollHistory.length;
 
-document.getElementById("bonusTotal").innerText =
+document.getElementById(
+"bonusTotal"
+).innerText =
 "₹" + totalBonus;
 
-document.getElementById("otTotal").innerText =
+document.getElementById(
+"otTotal"
+).innerText =
 "₹" + totalOT;
 
 }
 
 function editPayroll(index){
 
-const payroll = payrollHistory[index];
+const payroll =
+payrollHistory[index];
 
-document.getElementById("empName").value = payroll.name;
-document.getElementById("empDept").value = payroll.dept;
-document.getElementById("basicSalary").value = payroll.basic;
-document.getElementById("otAmount").value = payroll.ot;
-document.getElementById("bonus").value = payroll.bonus;
-document.getElementById("deductions").value = payroll.deduction;
+document.getElementById(
+"empName"
+).value =
+payroll.name;
+
+document.getElementById(
+"empDept"
+).value =
+payroll.dept;
+
+document.getElementById(
+"basicSalary"
+).value =
+payroll.basic;
+
+document.getElementById(
+"otAmount"
+).value =
+payroll.ot;
+
+document.getElementById(
+"bonus"
+).value =
+payroll.bonus;
+
+document.getElementById(
+"deductions"
+).value =
+payroll.deduction;
 
 editIndex = index;
 
@@ -665,7 +719,9 @@ behavior:"smooth"
 function deletePayroll(index){
 
 const confirmDelete =
-confirm("Delete Payroll Record?");
+confirm(
+"Delete Payroll Record?"
+);
 
 if(confirmDelete){
 
@@ -682,18 +738,51 @@ renderPayroll();
 
 }
 
+function clearForm(){
+
+document.getElementById(
+"empName"
+).value = "";
+
+document.getElementById(
+"empDept"
+).value = "";
+
+document.getElementById(
+"basicSalary"
+).value = "";
+
+document.getElementById(
+"otAmount"
+).value = "";
+
+document.getElementById(
+"bonus"
+).value = "";
+
+document.getElementById(
+"deductions"
+).value = "";
+
+}
+
 function searchPayroll(){
 
 const value =
-document.getElementById("searchInput")
-.value.toLowerCase();
+document.getElementById(
+"searchPayroll"
+).value.toLowerCase();
 
 const rows =
-document.querySelectorAll("#payrollTable tr");
+document.querySelectorAll(
+"#payrollTable tr"
+);
 
 rows.forEach((row,index)=>{
 
-if(index === 0) return;
+if(index === 0){
+return;
+}
 
 const text =
 row.innerText.toLowerCase();
@@ -710,38 +799,20 @@ text.includes(value)
 function downloadPDF(){
 
 const element =
-document.getElementById("salarySlip");
+document.getElementById(
+"salarySlip"
+);
+
+const employeeName =
+document.getElementById(
+"slipName"
+).innerText;
 
 html2pdf()
 .from(element)
-.save("salary-slip.pdf");
-
-}
-
-function toggleTheme(){
-
-document.getElementById("body")
-.classList.toggle("dark-mode");
-
-const dark =
-document.getElementById("body")
-.classList.contains("dark-mode");
-
-localStorage.setItem("darkMode",dark);
-
-}
-
-function loadTheme(){
-
-const dark =
-localStorage.getItem("darkMode");
-
-if(dark === "true"){
-
-document.getElementById("body")
-.classList.add("dark-mode");
-
-}
+.save(
+employeeName + "-salary-slip.pdf"
+);
 
 }
 
