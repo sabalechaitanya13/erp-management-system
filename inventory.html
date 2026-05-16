@@ -154,7 +154,7 @@ font-weight:bold;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -163,7 +163,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -185,23 +185,14 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
 <a href="#"
@@ -332,6 +323,7 @@ Export JSON
 window.onload = function(){
 
 loadTheme();
+renderInventory();
 
 };
 
@@ -361,8 +353,6 @@ localStorage.getItem("inventory")
 
 let editIndex = -1;
 
-renderInventory();
-
 function addItem(){
 
 const name =
@@ -379,6 +369,13 @@ document.getElementById("itemPrice").value;
 
 const supplier =
 document.getElementById("itemSupplier").value;
+
+if(name === ""){
+
+alert("Please enter item name");
+return;
+
+}
 
 const itemData = {
 
@@ -397,7 +394,6 @@ inventory.push(itemData);
 }else{
 
 inventory[editIndex] = itemData;
-
 editIndex = -1;
 
 }
@@ -438,11 +434,11 @@ let lowStock = 0;
 
 inventory.forEach((item,index)=>{
 
-totalQty += Number(item.qty);
+totalQty += Number(item.qty || 0);
 
 totalValue +=
-Number(item.qty) *
-Number(item.price);
+Number(item.qty || 0) *
+Number(item.price || 0);
 
 let status = "";
 let statusClass = "";
@@ -499,3 +495,95 @@ onclick="deleteItem(${index})">
 Delete
 
 </button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"totalItems"
+).innerText = inventory.length;
+
+document.getElementById(
+"totalStock"
+).innerText = totalQty;
+
+document.getElementById(
+"inventoryValue"
+).innerText = "₹" + totalValue;
+
+document.getElementById(
+"lowStock"
+).innerText = lowStock;
+
+}
+
+function deleteItem(index){
+
+inventory.splice(index,1);
+
+localStorage.setItem(
+"inventory",
+JSON.stringify(inventory)
+);
+
+renderInventory();
+
+}
+
+function editItem(index){
+
+const item = inventory[index];
+
+document.getElementById("itemName").value = item.name;
+document.getElementById("itemCategory").value = item.category;
+document.getElementById("itemQty").value = item.qty;
+document.getElementById("itemPrice").value = item.price;
+document.getElementById("itemSupplier").value = item.supplier;
+
+editIndex = index;
+
+}
+
+function clearForm(){
+
+document.getElementById("itemName").value = "";
+document.getElementById("itemQty").value = "";
+document.getElementById("itemPrice").value = "";
+document.getElementById("itemSupplier").value = "";
+
+}
+
+function exportInventory(){
+
+const dataStr =
+JSON.stringify(inventory,null,2);
+
+const blob =
+new Blob([dataStr],
+{type:"application/json"});
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+
+a.download =
+"inventory.json";
+
+a.click();
+
+}
+
+</script>
+
+</body>
+
+</html>
