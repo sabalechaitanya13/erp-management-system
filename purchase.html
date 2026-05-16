@@ -4,9 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Purchase Management</title>
 
@@ -55,6 +53,11 @@ border-radius:15px;
 background:rgba(255,255,255,0.08);
 color:white;
 text-decoration:none;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
 }
 
 .main{
@@ -80,6 +83,11 @@ grid-template-columns:1fr 1fr;
 gap:25px;
 }
 
+label{
+display:block;
+margin-bottom:10px;
+}
+
 input,select{
 width:100%;
 padding:18px;
@@ -102,6 +110,15 @@ margin-right:10px;
 
 .export-btn{
 background:#4dabf7;
+}
+
+.delete-btn{
+background:#ff4d6d;
+}
+
+.edit-btn{
+background:#ffd43b;
+color:black;
 }
 
 table{
@@ -154,21 +171,17 @@ font-weight:bold;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="js/auth.js"></script>
 
 <script>
 
-if(
-!ERPAuth.isAuthenticated()
-){
+if(!ERPAuth.isAuthenticated()){
 
-window.location.href =
-"login.html";
+window.location.href = "login.html";
 
 }else{
 
-document.body.style.display =
-"block";
+document.body.style.display = "block";
 
 }
 
@@ -185,30 +198,18 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
-<a href="#"
-onclick="ERPAuth.logout()">
-
+<a href="#" onclick="ERPAuth.logout()">
 🚪 Logout
-
 </a>
 
 </div>
@@ -218,9 +219,7 @@ onclick="ERPAuth.logout()">
 <div class="main">
 
 <div class="topbar">
-
 <h1>Purchase Management</h1>
-
 </div>
 
 <div class="summary-grid">
@@ -309,14 +308,12 @@ Export JSON
 <table id="purchaseTable">
 
 <tr>
-
 <th>Vendor</th>
 <th>Product</th>
 <th>Quantity</th>
 <th>Amount</th>
 <th>Status</th>
 <th>Actions</th>
-
 </tr>
 
 </table>
@@ -338,26 +335,19 @@ loadTheme();
 function loadTheme(){
 
 const darkMode =
-localStorage.getItem(
-"darkMode"
-);
+localStorage.getItem("darkMode");
 
 if(darkMode === "true"){
 
-document.getElementById(
-"body"
-).classList.add(
-"dark-mode"
-);
+document.getElementById("body")
+.classList.add("dark-mode");
 
 }
 
 }
 
 let purchases =
-JSON.parse(
-localStorage.getItem("purchases")
-) || [];
+JSON.parse(localStorage.getItem("purchases")) || [];
 
 let editIndex = -1;
 
@@ -366,29 +356,31 @@ renderPurchases();
 function addPurchase(){
 
 const vendor =
-document.getElementById(
-"vendorName"
-).value;
+document.getElementById("vendorName").value;
 
 const product =
-document.getElementById(
-"productName"
-).value;
+document.getElementById("productName").value;
 
 const quantity =
-document.getElementById(
-"quantity"
-).value;
+document.getElementById("quantity").value;
 
 const amount =
-document.getElementById(
-"amount"
-).value;
+document.getElementById("amount").value;
 
 const status =
-document.getElementById(
-"status"
-).value;
+document.getElementById("status").value;
+
+if(
+vendor === "" ||
+product === "" ||
+quantity === "" ||
+amount === ""
+){
+
+alert("Please fill all fields");
+return;
+
+}
 
 const purchaseData = {
 
@@ -406,8 +398,7 @@ purchases.push(purchaseData);
 
 }else{
 
-purchases[editIndex] =
-purchaseData;
+purchases[editIndex] = purchaseData;
 
 editIndex = -1;
 
@@ -427,20 +418,16 @@ clearForm();
 function renderPurchases(){
 
 const table =
-document.getElementById(
-"purchaseTable"
-);
+document.getElementById("purchaseTable");
 
 table.innerHTML = `
 <tr>
-
 <th>Vendor</th>
 <th>Product</th>
 <th>Quantity</th>
 <th>Amount</th>
 <th>Status</th>
 <th>Actions</th>
-
 </tr>
 `;
 
@@ -450,8 +437,7 @@ let completed = 0;
 
 purchases.forEach((purchase,index)=>{
 
-totalAmount +=
-Number(purchase.amount);
+totalAmount += Number(purchase.amount);
 
 if(purchase.status === "Pending"){
 pending++;
@@ -494,6 +480,7 @@ ${purchase.status}
 <td>
 
 <button
+class="edit-btn"
 onclick="editPurchase(${index})">
 
 Edit
@@ -501,6 +488,7 @@ Edit
 </button>
 
 <button
+class="delete-btn"
 onclick="deletePurchase(${index})">
 
 Delete
@@ -515,56 +503,37 @@ Delete
 
 });
 
-document.getElementById(
-"totalOrders"
-).innerText =
+document.getElementById("totalOrders").innerText =
 purchases.length;
 
-document.getElementById(
-"totalAmount"
-).innerText =
+document.getElementById("totalAmount").innerText =
 "₹" + totalAmount;
 
-document.getElementById(
-"pendingOrders"
-).innerText =
+document.getElementById("pendingOrders").innerText =
 pending;
 
-document.getElementById(
-"completedOrders"
-).innerText =
+document.getElementById("completedOrders").innerText =
 completed;
 
 }
 
 function editPurchase(index){
 
-const purchase =
-purchases[index];
+const purchase = purchases[index];
 
-document.getElementById(
-"vendorName"
-).value =
+document.getElementById("vendorName").value =
 purchase.vendor;
 
-document.getElementById(
-"productName"
-).value =
+document.getElementById("productName").value =
 purchase.product;
 
-document.getElementById(
-"quantity"
-).value =
+document.getElementById("quantity").value =
 purchase.quantity;
 
-document.getElementById(
-"amount"
-).value =
+document.getElementById("amount").value =
 purchase.amount;
 
-document.getElementById(
-"status"
-).value =
+document.getElementById("status").value =
 purchase.status;
 
 editIndex = index;
@@ -593,7 +562,6 @@ function exportPurchases(){
 
 const dataStr =
 "data:text/json;charset=utf-8," +
-
 encodeURIComponent(
 JSON.stringify(purchases,null,2)
 );
@@ -601,19 +569,14 @@ JSON.stringify(purchases,null,2)
 const downloadAnchor =
 document.createElement("a");
 
-downloadAnchor.setAttribute(
-"href",
-dataStr
-);
+downloadAnchor.setAttribute("href",dataStr);
 
 downloadAnchor.setAttribute(
 "download",
 "purchases.json"
 );
 
-document.body.appendChild(
-downloadAnchor
-);
+document.body.appendChild(downloadAnchor);
 
 downloadAnchor.click();
 
@@ -623,21 +586,11 @@ downloadAnchor.remove();
 
 function clearForm(){
 
-document.getElementById(
-"vendorName"
-).value = "";
-
-document.getElementById(
-"productName"
-).value = "";
-
-document.getElementById(
-"quantity"
-).value = "";
-
-document.getElementById(
-"amount"
-).value = "";
+document.getElementById("vendorName").value = "";
+document.getElementById("productName").value = "";
+document.getElementById("quantity").value = "";
+document.getElementById("amount").value = "";
+document.getElementById("status").value = "Pending";
 
 }
 
