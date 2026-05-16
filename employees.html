@@ -206,7 +206,7 @@ margin-top:10px;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -215,7 +215,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -447,6 +447,7 @@ id="employeeGrid">
 window.onload = function(){
 
 loadTheme();
+renderEmployees(employees);
 
 };
 
@@ -475,8 +476,6 @@ localStorage.getItem("employees")
 ) || [];
 
 let editIndex = -1;
-
-renderEmployees(employees);
 
 function addEmployee(){
 
@@ -513,7 +512,7 @@ const reader = new FileReader();
 
 reader.onload = function(e){
 
-const employeeData = {
+saveEmployee({
 
 id,
 name,
@@ -523,9 +522,7 @@ email,
 phone,
 photo:e.target.result
 
-};
-
-saveEmployee(employeeData);
+});
 
 };
 
@@ -576,4 +573,194 @@ clearForm();
 
 }
 
-function
+function renderEmployees(data){
+
+const grid =
+document.getElementById("employeeGrid");
+
+grid.innerHTML = "";
+
+let engineering = 0;
+let hr = 0;
+let accounts = 0;
+
+data.forEach((emp,index)=>{
+
+if(emp.dept === "Engineering") engineering++;
+if(emp.dept === "HR") hr++;
+if(emp.dept === "Accounts") accounts++;
+
+grid.innerHTML += `
+
+<div class="employee-card">
+
+<img src="${emp.photo}">
+
+<h2>${emp.name}</h2>
+
+<p>ID: ${emp.id}</p>
+
+<p>${emp.dept}</p>
+
+<p>₹${emp.salary}</p>
+
+<p>${emp.email}</p>
+
+<p>${emp.phone}</p>
+
+<button
+class="action-btn edit-btn"
+onclick="editEmployee(${index})">
+
+Edit
+
+</button>
+
+<button
+class="action-btn delete-btn"
+onclick="deleteEmployee(${index})">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById(
+"totalEmployees"
+).innerText = data.length;
+
+document.getElementById(
+"engineeringCount"
+).innerText = engineering;
+
+document.getElementById(
+"hrCount"
+).innerText = hr;
+
+document.getElementById(
+"accountsCount"
+).innerText = accounts;
+
+}
+
+function deleteEmployee(index){
+
+employees.splice(index,1);
+
+localStorage.setItem(
+"employees",
+JSON.stringify(employees)
+);
+
+renderEmployees(employees);
+
+}
+
+function editEmployee(index){
+
+const emp = employees[index];
+
+document.getElementById("empId").value = emp.id;
+document.getElementById("empName").value = emp.name;
+document.getElementById("empDept").value = emp.dept;
+document.getElementById("empSalary").value = emp.salary;
+document.getElementById("empEmail").value = emp.email;
+document.getElementById("empPhone").value = emp.phone;
+
+editIndex = index;
+
+}
+
+function clearForm(){
+
+document.getElementById("empId").value = "";
+document.getElementById("empName").value = "";
+document.getElementById("empSalary").value = "";
+document.getElementById("empEmail").value = "";
+document.getElementById("empPhone").value = "";
+document.getElementById("empPhoto").value = "";
+
+}
+
+function filterEmployees(){
+
+const search =
+document.getElementById("searchInput")
+.value.toLowerCase();
+
+const dept =
+document.getElementById("departmentFilter")
+.value;
+
+const salary =
+document.getElementById("salaryFilter")
+.value;
+
+let filtered = employees.filter(emp=>{
+
+let matchSearch =
+emp.name.toLowerCase().includes(search);
+
+let matchDept =
+dept === "" || emp.dept === dept;
+
+let matchSalary = true;
+
+if(salary === "low"){
+matchSalary = emp.salary < 20000;
+}
+
+if(salary === "medium"){
+matchSalary =
+emp.salary >= 20000 &&
+emp.salary <= 50000;
+}
+
+if(salary === "high"){
+matchSalary = emp.salary > 50000;
+}
+
+return matchSearch &&
+matchDept &&
+matchSalary;
+
+});
+
+renderEmployees(filtered);
+
+}
+
+function exportEmployees(){
+
+const dataStr =
+JSON.stringify(employees,null,2);
+
+const blob =
+new Blob([dataStr],
+{type:"application/json"});
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+
+a.download =
+"employees.json";
+
+a.click();
+
+}
+
+</script>
+
+</body>
+
+</html>
