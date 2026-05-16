@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Reports & Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+transition:0.3s;
+}
+
+.dark-mode{
+background:linear-gradient(135deg,#111,#222);
+}
+
+.container{
+display:flex;
+}
+
+.sidebar{
+width:300px;
+min-height:100vh;
+background:rgba(0,0,0,0.15);
+padding:20px;
+}
+
+.logo{
+font-size:42px;
+font-weight:bold;
+margin-bottom:40px;
+}
+
+.menu a{
+display:block;
+padding:18px;
+margin-bottom:14px;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+color:white;
+text-decoration:none;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.topbar h1{
+font-size:56px;
+margin-bottom:35px;
+}
+
+.summary-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.summary-card{
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:20px;
+}
+
+.summary-card h2{
+font-size:18px;
+}
+
+.summary-card h1{
+font-size:42px;
+margin-top:10px;
+}
+
+.chart-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-bottom:30px;
+}
+
+.chart-card{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+}
+
+.chart-card h2{
+margin-bottom:20px;
+}
+
+canvas{
+background:white;
+padding:10px;
+border-radius:20px;
+}
+
+.report-card{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+}
+
+.report-btn{
+padding:16px 24px;
+border:none;
+border-radius:14px;
+background:#57cc99;
+color:white;
+font-size:16px;
+cursor:pointer;
+margin-right:10px;
+margin-top:20px;
+}
+
+.export-btn{
+background:#4dabf7;
+}
+
+.activity-item{
+padding:15px;
+margin-top:15px;
+background:rgba(255,255,255,0.08);
+border-radius:12px;
+}
+
+</style>
+
+</head>
+
+<body id="body" style="display:none;">
+
+<script src="../js/auth.js"></script>
+
+<script>
+
+if(
+!ERPAuth.isAuthenticated()
+){
+
+window.location.href =
+"login.html";
+
+}else{
+
+document.body.style.display =
+"block";
+
+}
+
+</script>
+
+<div class="container">
+
+<div class="sidebar">
+
+<div class="logo">
+ERP System
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="employees.html">👥 Employees</a>
+
+<a href="attendance.html">🕒 Attendance</a>
+
+<a href="leaves.html">🏖 Leave Management</a>
+
+<a href="payroll.html">💰 Payroll</a>
+
+<a href="inventory.html">📦 Inventory</a>
+
+<a href="purchase.html">🛒 Purchase</a>
+
+<a href="expenses.html">💳 Expenses</a>
+
+<a href="reports.html">📈 Reports</a>
+
+<a href="settings.html">⚙️ Settings</a>
+
+<a href="#"
+onclick="ERPAuth.logout()">
+
+🚪 Logout
+
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Reports & Analytics</h1>
+
+</div>
+
+<div class="summary-grid">
+
+<div class="summary-card">
+<h2>Total Employees</h2>
+<h1 id="employeeCount">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Total Purchases</h2>
+<h1 id="purchaseCount">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Total Expenses</h2>
+<h1 id="expenseTotal">₹0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Inventory Value</h2>
+<h1 id="inventoryValue">₹0</h1>
+</div>
+
+</div>
+
+<div class="chart-grid">
+
+<div class="chart-card">
+
+<h2>Expense Report</h2>
+
+<canvas id="expenseChart"></canvas>
+
+</div>
+
+<div class="chart-card">
+
+<h2>Purchase Report</h2>
+
+<canvas id="purchaseChart"></canvas>
+
+</div>
+
+</div>
+
+<div class="report-card">
+
+<h2>Generate Reports</h2>
+
+<button
+class="report-btn"
+onclick="downloadFullReport()">
+
+Download Full Report
+
+</button>
+
+<button
+class="report-btn export-btn"
+onclick="exportAllData()">
+
+Export ERP Data
+
+</button>
+
+<div id="reportActivity">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+loadTheme();
+
+};
+
+function loadTheme(){
+
+const darkMode =
+localStorage.getItem(
+"darkMode"
+);
+
+if(darkMode === "true"){
+
+document.getElementById(
+"body"
+).classList.add(
+"dark-mode"
+);
+
+}
+
+}
+
+const employees =
+JSON.parse(
+localStorage.getItem("employees")
+) || [];
+
+const purchases =
+JSON.parse(
+localStorage.getItem("purchases")
+) || [];
+
+const expenses =
+JSON.parse(
+localStorage.getItem("expenses")
+) || [];
+
+const inventory =
+JSON.parse(
+localStorage.getItem("inventory")
+) || [];
+
+document.getElementById(
+"employeeCount"
+).innerText =
+employees.length;
+
+document.getElementById(
+"purchaseCount"
+).innerText =
+purchases.length;
+
+let totalExpense = 0;
+
+expenses.forEach((expense)=>{
+
+totalExpense +=
+Number(expense.amount);
+
+});
+
+document.getElementById(
+"expenseTotal"
+).innerText =
+"₹" + totalExpense;
+
+let inventoryValue = 0;
+
+inventory.forEach((item)=>{
+
+inventoryValue +=
+Number(item.qty) *
+Number(item.price);
+
+});
+
+document.getElementById(
+"inventoryValue"
+).innerText =
+"₹" + inventoryValue;
+
+let approved = 0;
+let pending = 0;
+let rejected = 0;
+
+expenses.forEach((expense)=>{
+
+if(expense.status === "Approved"){
+approved++;
+}
+
+if(expense.status === "Pending"){
+pending++;
+}
+
+if(expense.status === "Rejected"){
+rejected++;
+}
+
+});
+
+new Chart(
+document.getElementById(
+"expenseChart"
+),
+{
+type:"bar",
+
+data:{
+
+labels:[
+"Approved",
+"Pending",
+"Rejected"
+],
+
+datasets:[{
+
+label:"Expenses",
+
+data:[
+approved,
+pending,
+rejected
+],
+
+backgroundColor:[
+"#57cc99",
+"#ffd43b",
+"#ff4d6d"
+]
+
+}]
+}
+}
+);
+
+let completed = 0;
+let pendingPurchase = 0;
+let cancelled = 0;
+
+purchases.forEach((purchase)=>{
+
+if(purchase.status === "Completed"){
+completed++;
+}
+
+if(purchase.status === "Pending"){
+pendingPurchase++;
+}
+
+if(purchase.status === "Cancelled"){
+cancelled++;
+}
+
+});
+
+new Chart(
+document.getElementById(
+"purchaseChart"
+),
+{
+type:"pie",
+
+data:{
+
+labels:[
+"Completed",
+"Pending",
+"Cancelled"
+],
+
+datasets:[{
+
+data:[
+completed,
+pendingPurchase,
+cancelled
+],
+
+backgroundColor:[
+"#57cc99",
+"#ffd43b",
+"#ff4d6d"
+]
+
+}]
+}
+}
+);
+
+function downloadFullReport(){
+
+let reportText = `
+ERP REPORT SUMMARY
+
+====================
+
+Employees:
+${employees.length}
+
+Purchases:
+${purchases.length}
+
+Expenses:
+₹${totalExpense}
+
+Inventory Value:
+₹${inventoryValue}
+
+====================
+`;
+
+const blob =
+new Blob(
+[reportText],
+{type:"text/plain"}
+);
+
+const link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"erp-report.txt";
+
+link.click();
+
+document.getElementById(
+"reportActivity"
+).innerHTML += `
+
+<div class="activity-item">
+
+Full ERP Report Downloaded
+
+</div>
+
+`;
+
+}
+
+function exportAllData(){
+
+const allData = {
+
+employees,
+purchases,
+expenses,
+inventory
+
+};
+
+const dataStr =
+"data:text/json;charset=utf-8," +
+
+encodeURIComponent(
+JSON.stringify(allData,null,2)
+);
+
+const downloadAnchor =
+document.createElement("a");
+
+downloadAnchor.setAttribute(
+"href",
+dataStr
+);
+
+downloadAnchor.setAttribute(
+"download",
+"erp-data.json"
+);
+
+document.body.appendChild(
+downloadAnchor
+);
+
+downloadAnchor.click();
+
+downloadAnchor.remove();
+
+document.getElementById(
+"reportActivity"
+).innerHTML += `
+
+<div class="activity-item">
+
+ERP JSON Data Exported
+
+</div>
+
+`;
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>ERP Login</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+position:relative;
+}
+
+.background{
+
+position:absolute;
+width:100%;
+height:100%;
+
+background:
+linear-gradient(
+135deg,
+#667eea,
+#764ba2
+);
+
+overflow:hidden;
+
+}
+
+.blob{
+
+position:absolute;
+border-radius:50%;
+filter:blur(80px);
+opacity:0.6;
+animation:float 12s infinite ease-in-out;
+
+}
+
+.blob1{
+width:350px;
+height:350px;
+background:#845ef7;
+top:-100px;
+left:-100px;
+}
+
+.blob2{
+width:300px;
+height:300px;
+background:#4dabf7;
+bottom:-100px;
+right:-100px;
+animation-delay:3s;
+}
+
+.blob3{
+width:250px;
+height:250px;
+background:#57cc99;
+top:40%;
+left:60%;
+animation-delay:6s;
+}
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(30px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+.login-container{
+
+position:relative;
+z-index:10;
+
+width:420px;
+
+padding:45px;
+
+border-radius:30px;
+
+background:
+rgba(255,255,255,0.12);
+
+backdrop-filter:blur(20px);
+
+box-shadow:
+0 8px 40px rgba(0,0,0,0.3);
+
+color:white;
+
+}
+
+.logo{
+
+font-size:42px;
+font-weight:700;
+margin-bottom:10px;
+text-align:center;
+
+}
+
+.subtitle{
+
+text-align:center;
+opacity:0.8;
+margin-bottom:35px;
+
+}
+
+.input-group{
+
+margin-bottom:22px;
+
+}
+
+label{
+
+display:block;
+margin-bottom:10px;
+font-size:15px;
+
+}
+
+input{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:16px;
+
+background:
+rgba(255,255,255,0.15);
+
+color:white;
+
+font-size:16px;
+
+outline:none;
+
+}
+
+input::placeholder{
+
+color:rgba(255,255,255,0.6);
+
+}
+
+.login-btn{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:16px;
+
+background:
+linear-gradient(
+135deg,
+#57cc99,
+#38d9a9
+);
+
+color:white;
+
+font-size:17px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:0.3s;
+
+margin-top:10px;
+
+}
+
+.login-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.demo{
+
+margin-top:30px;
+
+padding:20px;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,0.08);
+
+font-size:14px;
+
+line-height:1.8;
+
+}
+
+.error{
+
+margin-top:15px;
+color:#ff6b6b;
+text-align:center;
+font-size:14px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="background">
+
+<div class="blob blob1"></div>
+
+<div class="blob blob2"></div>
+
+<div class="blob blob3"></div>
+
+</div>
+
+<div class="login-container">
+
+<div class="logo">
+ERP System
+</div>
+
+<div class="subtitle">
+Premium Enterprise Management Software
+</div>
+
+<div class="input-group">
+
+<label>
+Email Address
+</label>
+
+<input
+type="email"
+id="email"
+placeholder="admin@erp.com">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Password
+</label>
+
+<input
+type="password"
+id="password"
+placeholder="••••••••">
+
+</div>
+
+<button
+class="login-btn"
+onclick="handleLogin()">
+
+Sign In
+
+</button>
+
+<div
+class="error"
+id="errorText">
+
+</div>
+
+<div class="demo">
+
+<strong>
+Demo Credentials
+</strong>
+
+<br><br>
+
+Email:
+admin@erp.com
+
+<br>
+
+Password:
+admin123
+
+</div>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+<script>
+
+function handleLogin(){
+
+const email =
+document.getElementById(
+"email"
+).value;
+
+const password =
+document.getElementById(
+"password"
+).value;
+
+if(
+email === "" ||
+password === ""
+){
+
+document.getElementById(
+"errorText"
+).innerText =
+"Please fill all fields";
+
+return;
+
+}
+
+if(
+email === "admin@erp.com" &&
+password === "admin123"
+){
+
+ERPAuth.login(
+email,
+password
+);
+
+}else{
+
+document.getElementById(
+"errorText"
+).innerText =
+"Invalid Credentials";
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

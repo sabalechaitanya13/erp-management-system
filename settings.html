@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>ERP Settings</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+transition:0.3s;
+}
+
+.dark-mode{
+background:linear-gradient(135deg,#111,#222);
+}
+
+.dark-mode .card,
+.dark-mode .summary-card,
+.dark-mode .chart-card,
+.dark-mode .employee-card,
+.dark-mode .activity-card,
+.dark-mode .sidebar{
+
+background:rgba(255,255,255,0.08);
+
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select{
+
+background:#222;
+color:white;
+
+}
+
+.container{
+display:flex;
+}
+
+.sidebar{
+width:300px;
+min-height:100vh;
+background:rgba(0,0,0,0.15);
+padding:20px;
+}
+
+.logo{
+font-size:42px;
+font-weight:bold;
+margin-bottom:40px;
+}
+
+.menu a{
+display:block;
+padding:18px;
+margin-bottom:14px;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+color:white;
+text-decoration:none;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.topbar h1{
+font-size:56px;
+margin-bottom:35px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+margin-bottom:30px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:18px;
+border:none;
+border-radius:14px;
+font-size:16px;
+}
+
+button{
+margin-top:25px;
+padding:16px 28px;
+border:none;
+border-radius:14px;
+background:#57cc99;
+color:white;
+cursor:pointer;
+font-size:16px;
+margin-right:10px;
+}
+
+.theme-btn{
+background:#845ef7;
+}
+
+.reset-btn{
+background:#ff4d6d;
+}
+
+</style>
+
+</head>
+
+<body id="body" style="display:none;">
+
+<script src="../js/auth.js"></script>
+
+<script>
+
+if(
+!ERPAuth.isAuthenticated()
+){
+
+window.location.href =
+"login.html";
+
+}else{
+
+document.body.style.display =
+"block";
+
+}
+
+</script>
+
+<div class="container">
+
+<div class="sidebar">
+
+<div class="logo">
+ERP System
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="employees.html">👥 Employees</a>
+
+<a href="attendance.html">🕒 Attendance</a>
+
+<a href="leaves.html">🏖 Leave Management</a>
+
+<a href="payroll.html">💰 Payroll</a>
+
+<a href="inventory.html">📦 Inventory</a>
+
+<a href="purchase.html">🛒 Purchase</a>
+
+<a href="expenses.html">💳 Expenses</a>
+
+<a href="reports.html">📈 Reports</a>
+
+<a href="settings.html">⚙️ Settings</a>
+
+<a href="#"
+onclick="ERPAuth.logout()">
+
+🚪 Logout
+
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>ERP Settings</h1>
+
+</div>
+
+<div class="card">
+
+<h2>Company Information</h2>
+
+<br>
+
+<div class="form-grid">
+
+<div>
+
+<label>
+Company Name
+</label>
+
+<input
+type="text"
+id="companyName">
+
+</div>
+
+<div>
+
+<label>
+Company Email
+</label>
+
+<input
+type="email"
+id="companyEmail">
+
+</div>
+
+<div>
+
+<label>
+Phone Number
+</label>
+
+<input
+type="text"
+id="companyPhone">
+
+</div>
+
+<div>
+
+<label>
+Address
+</label>
+
+<textarea
+id="companyAddress">
+
+</textarea>
+
+</div>
+
+</div>
+
+<button onclick="saveSettings()">
+
+Save Settings
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Theme Settings</h2>
+
+<button
+class="theme-btn"
+onclick="toggleTheme()">
+
+Toggle Dark Mode
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>System Management</h2>
+
+<button
+class="reset-btn"
+onclick="clearERPData()">
+
+Clear All ERP Data
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+loadSettings();
+
+loadTheme();
+
+};
+
+function saveSettings(){
+
+const settings = {
+
+companyName:
+document.getElementById(
+"companyName"
+).value,
+
+companyEmail:
+document.getElementById(
+"companyEmail"
+).value,
+
+companyPhone:
+document.getElementById(
+"companyPhone"
+).value,
+
+companyAddress:
+document.getElementById(
+"companyAddress"
+).value
+
+};
+
+localStorage.setItem(
+"erpSettings",
+JSON.stringify(settings)
+);
+
+alert(
+"Settings Saved Successfully"
+);
+
+}
+
+function loadSettings(){
+
+const settings =
+JSON.parse(
+localStorage.getItem(
+"erpSettings"
+)
+);
+
+if(settings){
+
+document.getElementById(
+"companyName"
+).value =
+settings.companyName || "";
+
+document.getElementById(
+"companyEmail"
+).value =
+settings.companyEmail || "";
+
+document.getElementById(
+"companyPhone"
+).value =
+settings.companyPhone || "";
+
+document.getElementById(
+"companyAddress"
+).value =
+settings.companyAddress || "";
+
+}
+
+}
+
+function toggleTheme(){
+
+document.getElementById(
+"body"
+).classList.toggle(
+"dark-mode"
+);
+
+const darkMode =
+document.getElementById(
+"body"
+).classList.contains(
+"dark-mode"
+);
+
+localStorage.setItem(
+"darkMode",
+darkMode
+);
+
+}
+
+function loadTheme(){
+
+const darkMode =
+localStorage.getItem(
+"darkMode"
+);
+
+if(darkMode === "true"){
+
+document.getElementById(
+"body"
+).classList.add(
+"dark-mode"
+);
+
+}
+
+}
+
+function clearERPData(){
+
+const confirmDelete =
+confirm(
+"Delete all ERP data permanently?"
+);
+
+if(confirmDelete){
+
+localStorage.clear();
+
+sessionStorage.clear();
+
+alert(
+"All ERP Data Deleted"
+);
+
+window.location.href =
+"login.html";
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

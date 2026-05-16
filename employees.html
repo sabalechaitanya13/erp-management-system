@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Employee Management</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+transition:0.3s;
+}
+
+.dark-mode{
+background:linear-gradient(135deg,#111,#222);
+}
+
+.container{
+display:flex;
+}
+
+.sidebar{
+width:300px;
+min-height:100vh;
+background:rgba(0,0,0,0.15);
+padding:20px;
+}
+
+.logo{
+font-size:42px;
+font-weight:bold;
+margin-bottom:40px;
+}
+
+.menu a{
+display:block;
+color:white;
+text-decoration:none;
+padding:18px;
+border-radius:15px;
+margin-bottom:14px;
+background:rgba(255,255,255,0.08);
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+}
+
+.topbar h1{
+font-size:56px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+margin-bottom:30px;
+backdrop-filter:blur(10px);
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+.filter-grid{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:20px;
+margin-top:20px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
+font-size:16px;
+}
+
+input,select{
+width:100%;
+padding:18px;
+border:none;
+border-radius:14px;
+font-size:16px;
+}
+
+.save-btn{
+margin-top:25px;
+padding:16px 28px;
+border:none;
+border-radius:14px;
+background:#57cc99;
+color:white;
+cursor:pointer;
+font-size:16px;
+margin-right:10px;
+}
+
+.export-btn{
+background:#4dabf7;
+}
+
+.employee-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+}
+
+.employee-card{
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:25px;
+text-align:center;
+transition:0.3s;
+}
+
+.employee-card:hover{
+transform:translateY(-5px);
+}
+
+.employee-card img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:20px;
+border:4px solid rgba(255,255,255,0.3);
+}
+
+.employee-card h2{
+margin-bottom:10px;
+}
+
+.employee-card p{
+margin-bottom:8px;
+}
+
+.action-btn{
+border:none;
+padding:10px 14px;
+border-radius:10px;
+color:white;
+cursor:pointer;
+margin-top:10px;
+margin-right:5px;
+}
+
+.delete-btn{
+background:#ff4d6d;
+}
+
+.edit-btn{
+background:#4dabf7;
+}
+
+.summary-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.summary-card{
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:20px;
+}
+
+.summary-card h1{
+font-size:42px;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body id="body" style="display:none;">
+
+<script src="../js/auth.js"></script>
+
+<script>
+
+if(
+!ERPAuth.isAuthenticated()
+){
+
+window.location.href =
+"login.html";
+
+}else{
+
+document.body.style.display =
+"block";
+
+}
+
+</script>
+
+<div class="container">
+
+<div class="sidebar">
+
+<div class="logo">
+ERP System
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="employees.html">👥 Employees</a>
+
+<a href="attendance.html">🕒 Attendance</a>
+
+<a href="leaves.html">🏖 Leave Management</a>
+
+<a href="payroll.html">💰 Payroll</a>
+
+<a href="inventory.html">📦 Inventory</a>
+
+<a href="purchase.html">🛒 Purchase</a>
+
+<a href="expenses.html">💳 Expenses</a>
+
+<a href="reports.html">📈 Reports</a>
+
+<a href="settings.html">⚙️ Settings</a>
+
+<a href="#"
+onclick="ERPAuth.logout()">
+
+🚪 Logout
+
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Employees</h1>
+
+</div>
+
+<div class="summary-grid">
+
+<div class="summary-card">
+<h2>Total Employees</h2>
+<h1 id="totalEmployees">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Engineering</h2>
+<h1 id="engineeringCount">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>HR</h2>
+<h1 id="hrCount">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Accounts</h2>
+<h1 id="accountsCount">0</h1>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Add Employee</h2>
+
+<br>
+
+<div class="form-grid">
+
+<div>
+<label>Employee ID</label>
+<input type="text" id="empId">
+</div>
+
+<div>
+<label>Employee Name</label>
+<input type="text" id="empName">
+</div>
+
+<div>
+<label>Department</label>
+
+<select id="empDept">
+
+<option>Engineering</option>
+<option>HR</option>
+<option>Accounts</option>
+<option>Sales</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Salary</label>
+<input type="number" id="empSalary">
+</div>
+
+<div>
+<label>Email</label>
+<input type="email" id="empEmail">
+</div>
+
+<div>
+<label>Phone</label>
+<input type="text" id="empPhone">
+</div>
+
+<div>
+<label>Employee Photo</label>
+<input type="file" id="empPhoto"
+accept="image/*">
+</div>
+
+</div>
+
+<button class="save-btn"
+onclick="addEmployee()">
+
+Save Employee
+
+</button>
+
+<button class="save-btn export-btn"
+onclick="exportEmployees()">
+
+Export JSON
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Search & Filters</h2>
+
+<div class="filter-grid">
+
+<div>
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search Employee"
+onkeyup="filterEmployees()">
+
+</div>
+
+<div>
+
+<select id="departmentFilter"
+onchange="filterEmployees()">
+
+<option value="">
+All Departments
+</option>
+
+<option>Engineering</option>
+<option>HR</option>
+<option>Accounts</option>
+<option>Sales</option>
+
+</select>
+
+</div>
+
+<div>
+
+<select id="salaryFilter"
+onchange="filterEmployees()">
+
+<option value="">
+All Salaries
+</option>
+
+<option value="low">
+Below ₹20,000
+</option>
+
+<option value="medium">
+₹20,000 - ₹50,000
+</option>
+
+<option value="high">
+Above ₹50,000
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="employee-grid"
+id="employeeGrid">
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+loadTheme();
+
+};
+
+function loadTheme(){
+
+const darkMode =
+localStorage.getItem(
+"darkMode"
+);
+
+if(darkMode === "true"){
+
+document.getElementById(
+"body"
+).classList.add(
+"dark-mode"
+);
+
+}
+
+}
+
+let employees =
+JSON.parse(
+localStorage.getItem("employees")
+) || [];
+
+let editIndex = -1;
+
+renderEmployees(employees);
+
+function addEmployee(){
+
+const id =
+document.getElementById("empId").value;
+
+const name =
+document.getElementById("empName").value;
+
+const dept =
+document.getElementById("empDept").value;
+
+const salary =
+document.getElementById("empSalary").value;
+
+const email =
+document.getElementById("empEmail").value;
+
+const phone =
+document.getElementById("empPhone").value;
+
+const photo =
+document.getElementById("empPhoto").files[0];
+
+if(id === "" || name === ""){
+
+alert("Fill required fields");
+
+return;
+
+}
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+const employeeData = {
+
+id,
+name,
+dept,
+salary,
+email,
+phone,
+photo:e.target.result
+
+};
+
+saveEmployee(employeeData);
+
+};
+
+if(photo){
+
+reader.readAsDataURL(photo);
+
+}else{
+
+saveEmployee({
+
+id,
+name,
+dept,
+salary,
+email,
+phone,
+photo:"https://via.placeholder.com/120"
+
+});
+
+}
+
+}
+
+function saveEmployee(employeeData){
+
+if(editIndex === -1){
+
+employees.push(employeeData);
+
+}else{
+
+employees[editIndex] = employeeData;
+
+editIndex = -1;
+
+}
+
+localStorage.setItem(
+"employees",
+JSON.stringify(employees)
+);
+
+renderEmployees(employees);
+
+clearForm();
+
+}
+
+function

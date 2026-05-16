@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Inventory Management</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+transition:0.3s;
+}
+
+.dark-mode{
+background:linear-gradient(135deg,#111,#222);
+}
+
+.container{
+display:flex;
+}
+
+.sidebar{
+width:300px;
+min-height:100vh;
+background:rgba(0,0,0,0.15);
+padding:20px;
+}
+
+.logo{
+font-size:42px;
+font-weight:bold;
+margin-bottom:40px;
+}
+
+.menu a{
+display:block;
+padding:18px;
+margin-bottom:14px;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+color:white;
+text-decoration:none;
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.topbar h1{
+font-size:56px;
+margin-bottom:35px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:25px;
+margin-bottom:30px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+input,select{
+width:100%;
+padding:18px;
+border:none;
+border-radius:14px;
+font-size:16px;
+}
+
+button{
+margin-top:25px;
+padding:16px 28px;
+border:none;
+border-radius:14px;
+background:#57cc99;
+color:white;
+cursor:pointer;
+font-size:16px;
+margin-right:10px;
+}
+
+.export-btn{
+background:#4dabf7;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:18px;
+text-align:left;
+border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.summary-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.summary-card{
+background:rgba(255,255,255,0.12);
+padding:25px;
+border-radius:20px;
+}
+
+.summary-card h1{
+font-size:42px;
+margin-top:10px;
+}
+
+.low-stock{
+color:#ffd43b;
+font-weight:bold;
+}
+
+.out-stock{
+color:#ff4d6d;
+font-weight:bold;
+}
+
+.in-stock{
+color:#57cc99;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body id="body" style="display:none;">
+
+<script src="../js/auth.js"></script>
+
+<script>
+
+if(
+!ERPAuth.isAuthenticated()
+){
+
+window.location.href =
+"login.html";
+
+}else{
+
+document.body.style.display =
+"block";
+
+}
+
+</script>
+
+<div class="container">
+
+<div class="sidebar">
+
+<div class="logo">
+ERP System
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="employees.html">👥 Employees</a>
+
+<a href="attendance.html">🕒 Attendance</a>
+
+<a href="leaves.html">🏖 Leave Management</a>
+
+<a href="payroll.html">💰 Payroll</a>
+
+<a href="inventory.html">📦 Inventory</a>
+
+<a href="purchase.html">🛒 Purchase</a>
+
+<a href="expenses.html">💳 Expenses</a>
+
+<a href="reports.html">📈 Reports</a>
+
+<a href="settings.html">⚙️ Settings</a>
+
+<a href="#"
+onclick="ERPAuth.logout()">
+
+🚪 Logout
+
+</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<h1>Inventory</h1>
+</div>
+
+<div class="summary-grid">
+
+<div class="summary-card">
+<h2>Total Items</h2>
+<h1 id="totalItems">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Total Stock</h2>
+<h1 id="totalStock">0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Inventory Value</h2>
+<h1 id="inventoryValue">₹0</h1>
+</div>
+
+<div class="summary-card">
+<h2>Low Stock</h2>
+<h1 id="lowStock">0</h1>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Add Inventory Item</h2>
+
+<br>
+
+<div class="form-grid">
+
+<div>
+<label>Item Name</label>
+<input type="text" id="itemName">
+</div>
+
+<div>
+<label>Category</label>
+
+<select id="itemCategory">
+
+<option>Electronics</option>
+<option>Office</option>
+<option>Raw Material</option>
+<option>Tools</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Quantity</label>
+<input type="number" id="itemQty">
+</div>
+
+<div>
+<label>Price</label>
+<input type="number" id="itemPrice">
+</div>
+
+<div>
+<label>Supplier</label>
+<input type="text" id="itemSupplier">
+</div>
+
+</div>
+
+<button onclick="addItem()">
+Save Item
+</button>
+
+<button
+class="export-btn"
+onclick="exportInventory()">
+
+Export JSON
+
+</button>
+
+</div>
+
+<div class="card">
+
+<table id="inventoryTable">
+
+<tr>
+
+<th>Item</th>
+<th>Category</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Supplier</th>
+<th>Status</th>
+<th>Actions</th>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+loadTheme();
+
+};
+
+function loadTheme(){
+
+const darkMode =
+localStorage.getItem(
+"darkMode"
+);
+
+if(darkMode === "true"){
+
+document.getElementById(
+"body"
+).classList.add(
+"dark-mode"
+);
+
+}
+
+}
+
+let inventory =
+JSON.parse(
+localStorage.getItem("inventory")
+) || [];
+
+let editIndex = -1;
+
+renderInventory();
+
+function addItem(){
+
+const name =
+document.getElementById("itemName").value;
+
+const category =
+document.getElementById("itemCategory").value;
+
+const qty =
+document.getElementById("itemQty").value;
+
+const price =
+document.getElementById("itemPrice").value;
+
+const supplier =
+document.getElementById("itemSupplier").value;
+
+const itemData = {
+
+name,
+category,
+qty,
+price,
+supplier
+
+};
+
+if(editIndex === -1){
+
+inventory.push(itemData);
+
+}else{
+
+inventory[editIndex] = itemData;
+
+editIndex = -1;
+
+}
+
+localStorage.setItem(
+"inventory",
+JSON.stringify(inventory)
+);
+
+renderInventory();
+
+clearForm();
+
+}
+
+function renderInventory(){
+
+const table =
+document.getElementById("inventoryTable");
+
+table.innerHTML = `
+<tr>
+
+<th>Item</th>
+<th>Category</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Supplier</th>
+<th>Status</th>
+<th>Actions</th>
+
+</tr>
+`;
+
+let totalQty = 0;
+let totalValue = 0;
+let lowStock = 0;
+
+inventory.forEach((item,index)=>{
+
+totalQty += Number(item.qty);
+
+totalValue +=
+Number(item.qty) *
+Number(item.price);
+
+let status = "";
+let statusClass = "";
+
+if(Number(item.qty) === 0){
+
+status = "Out Of Stock";
+statusClass = "out-stock";
+
+}else if(Number(item.qty) <= 10){
+
+status = "Low Stock";
+statusClass = "low-stock";
+
+lowStock++;
+
+}else{
+
+status = "In Stock";
+statusClass = "in-stock";
+
+}
+
+table.innerHTML += `
+
+<tr>
+
+<td>${item.name}</td>
+
+<td>${item.category}</td>
+
+<td>${item.qty}</td>
+
+<td>₹${item.price}</td>
+
+<td>${item.supplier}</td>
+
+<td class="${statusClass}">
+${status}
+</td>
+
+<td>
+
+<button
+onclick="editItem(${index})">
+
+Edit
+
+</button>
+
+<button
+onclick="deleteItem(${index})">
+
+Delete
+
+</button>
