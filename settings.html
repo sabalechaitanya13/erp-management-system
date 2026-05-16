@@ -31,23 +31,15 @@ background:linear-gradient(135deg,#111,#222);
 }
 
 .dark-mode .card,
-.dark-mode .summary-card,
-.dark-mode .chart-card,
-.dark-mode .employee-card,
-.dark-mode .activity-card,
 .dark-mode .sidebar{
-
 background:rgba(255,255,255,0.08);
-
 }
 
 .dark-mode input,
 .dark-mode textarea,
 .dark-mode select{
-
 background:#222;
 color:white;
-
 }
 
 .container{
@@ -146,7 +138,7 @@ background:#ff4d6d;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -155,7 +147,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -177,23 +169,14 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
 <a href="#"
@@ -319,7 +302,6 @@ Clear All ERP Data
 window.onload = function(){
 
 loadSettings();
-
 loadTheme();
 
 };
@@ -455,7 +437,7 @@ alert(
 );
 
 window.location.href =
-"login.html";
+"index.html";
 
 }
 
