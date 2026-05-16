@@ -144,7 +144,7 @@ border-radius:12px;
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -153,7 +153,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -255,22 +255,6 @@ onclick="ERPAuth.logout()">
 
 </div>
 
-<div class="chart-card">
-
-<h2>Inventory Analytics</h2>
-
-<canvas id="inventoryChart"></canvas>
-
-</div>
-
-<div class="chart-card">
-
-<h2>Purchase Analytics</h2>
-
-<canvas id="purchaseChart"></canvas>
-
-</div>
-
 </div>
 
 <div class="activity-card">
@@ -294,6 +278,7 @@ onclick="ERPAuth.logout()">
 window.onload = function(){
 
 loadTheme();
+loadDashboard();
 
 };
 
@@ -315,6 +300,8 @@ document.getElementById(
 }
 
 }
+
+function loadDashboard(){
 
 const employees =
 JSON.parse(
@@ -349,7 +336,7 @@ let totalExpense = 0;
 expenses.forEach((expense)=>{
 
 totalExpense +=
-Number(expense.amount);
+Number(expense.amount || 0);
 
 });
 
@@ -363,8 +350,8 @@ let inventoryValue = 0;
 inventory.forEach((item)=>{
 
 inventoryValue +=
-Number(item.qty) *
-Number(item.price);
+Number(item.qty || 0) *
+Number(item.price || 0);
 
 });
 
@@ -433,10 +420,47 @@ backgroundColor:[
 }
 );
 
+new Chart(
+document.getElementById(
+"expenseChart"
+),
+{
+type:"bar",
+
+data:{
+labels:[
+"Expenses"
+],
+
+datasets:[{
+label:"Amount",
+data:[
+totalExpense
+],
+
+backgroundColor:[
+"#845ef7"
+]
+
+}]
+}
+}
+);
+
 const activityList =
 document.getElementById(
 "activityList"
 );
+
+if(employees.length === 0){
+
+activityList.innerHTML = `
+<div class="activity-item">
+No recent activity available
+</div>
+`;
+
+}else{
 
 employees.slice(-3).forEach((emp)=>{
 
@@ -450,6 +474,10 @@ New Employee Added:
 `;
 
 });
+
+}
+
+}
 
 </script>
 
