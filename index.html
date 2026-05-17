@@ -40,30 +40,24 @@ position:relative;
 }
 
 .background{
-
 position:absolute;
 width:100%;
 height:100%;
-
 background:
 linear-gradient(
 135deg,
 #667eea,
 #764ba2
 );
-
 overflow:hidden;
-
 }
 
 .blob{
-
 position:absolute;
 border-radius:50%;
 filter:blur(80px);
 opacity:0.6;
 animation:float 12s infinite ease-in-out;
-
 }
 
 .blob1{
@@ -132,124 +126,82 @@ color:white;
 }
 
 .logo{
-
 font-size:42px;
 font-weight:700;
 margin-bottom:10px;
 text-align:center;
-
 }
 
 .subtitle{
-
 text-align:center;
 opacity:0.8;
 margin-bottom:35px;
-
 }
 
 .input-group{
-
 margin-bottom:22px;
-
 }
 
 label{
-
 display:block;
 margin-bottom:10px;
 font-size:15px;
-
 }
 
 input{
-
 width:100%;
-
 padding:18px;
-
 border:none;
-
 border-radius:16px;
-
 background:
 rgba(255,255,255,0.15);
-
 color:white;
-
 font-size:16px;
-
 outline:none;
-
 }
 
 input::placeholder{
-
 color:rgba(255,255,255,0.6);
-
 }
 
 .login-btn{
-
 width:100%;
-
 padding:18px;
-
 border:none;
-
 border-radius:16px;
-
 background:
 linear-gradient(
 135deg,
 #57cc99,
 #38d9a9
 );
-
 color:white;
-
 font-size:17px;
-
 font-weight:600;
-
 cursor:pointer;
-
 transition:0.3s;
-
 margin-top:10px;
-
 }
 
 .login-btn:hover{
-
 transform:translateY(-2px);
-
 }
 
 .demo{
-
 margin-top:30px;
-
 padding:20px;
-
 border-radius:18px;
-
 background:
 rgba(255,255,255,0.08);
-
 font-size:14px;
-
 line-height:1.8;
-
 }
 
 .error{
-
 margin-top:15px;
 color:#ff6b6b;
 text-align:center;
 font-size:14px;
-
 }
 
 </style>
@@ -338,14 +290,69 @@ admin123
 
 </div>
 
-<script src="auth.js"></script>
-
 <script>
+
+/* GITHUB PAGES COMPATIBLE AUTH */
+
+const ERPAuth = {
+
+login(email,password){
+
+if(
+email === "admin@erp.com" &&
+password === "admin123"
+){
+
+localStorage.setItem(
+"erpUser",
+JSON.stringify({
+email:email
+})
+);
+
+/* REDIRECT AFTER LOGIN */
+
+window.location.href =
+"./dashboard.html";
+
+}else{
+
+document.getElementById(
+"errorText"
+).innerText =
+"Invalid email or password";
+
+}
+
+},
+
+logout(){
+
+localStorage.removeItem(
+"erpUser"
+);
+
+window.location.href =
+"./index.html";
+
+},
+
+isAuthenticated(){
+
+return localStorage.getItem(
+"erpUser"
+) !== null;
+
+}
+
+};
+
+/* AUTO LOGIN CHECK */
 
 if(localStorage.getItem("erpUser")){
 
 window.location.href =
-"dashboard.html";
+"./dashboard.html";
 
 }
 
