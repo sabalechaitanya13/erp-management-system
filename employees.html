@@ -204,27 +204,7 @@ margin-top:10px;
 
 </head>
 
-<body id="body" style="display:none;">
-
-<script src="auth.js"></script>
-
-<script>
-
-if(
-!ERPAuth.isAuthenticated()
-){
-
-window.location.href =
-"index.html";
-
-}else{
-
-document.body.style.display =
-"block";
-
-}
-
-</script>
+<body id="body">
 
 <div class="container">
 
@@ -236,28 +216,28 @@ ERP System
 
 <div class="menu">
 
-<a href="dashboard.html">📊 Dashboard</a>
+<a href="./dashboard.html">📊 Dashboard</a>
 
-<a href="employees.html">👥 Employees</a>
+<a href="./employees.html">👥 Employees</a>
 
-<a href="attendance.html">🕒 Attendance</a>
+<a href="./attendance.html">🕒 Attendance</a>
 
-<a href="leaves.html">🏖 Leave Management</a>
+<a href="./leaves.html">🏖 Leave Management</a>
 
-<a href="payroll.html">💰 Payroll</a>
+<a href="./payroll.html">💰 Payroll</a>
 
-<a href="inventory.html">📦 Inventory</a>
+<a href="./inventory.html">📦 Inventory</a>
 
-<a href="purchase.html">🛒 Purchase</a>
+<a href="./purchase.html">🛒 Purchase</a>
 
-<a href="expenses.html">💳 Expenses</a>
+<a href="./expenses.html">💳 Expenses</a>
 
-<a href="reports.html">📈 Reports</a>
+<a href="./reports.html">📈 Reports</a>
 
-<a href="settings.html">⚙️ Settings</a>
+<a href="./settings.html">⚙️ Settings</a>
 
 <a href="#"
-onclick="ERPAuth.logout()">
+onclick="logoutUser()">
 
 🚪 Logout
 
@@ -444,6 +424,30 @@ id="employeeGrid">
 
 <script>
 
+/* LOGIN CHECK */
+
+if(!localStorage.getItem("erpUser")){
+
+window.location.href =
+"./index.html";
+
+}
+
+/* LOGOUT */
+
+function logoutUser(){
+
+localStorage.removeItem(
+"erpUser"
+);
+
+window.location.href =
+"./index.html";
+
+}
+
+/* THEME */
+
 window.onload = function(){
 
 loadTheme();
@@ -470,12 +474,16 @@ document.getElementById(
 
 }
 
+/* EMPLOYEE STORAGE */
+
 let employees =
 JSON.parse(
 localStorage.getItem("employees")
 ) || [];
 
 let editIndex = -1;
+
+/* ADD EMPLOYEE */
 
 function addEmployee(){
 
@@ -548,6 +556,8 @@ photo:"https://via.placeholder.com/120"
 
 }
 
+/* SAVE EMPLOYEE */
+
 function saveEmployee(employeeData){
 
 if(editIndex === -1){
@@ -572,6 +582,8 @@ renderEmployees(employees);
 clearForm();
 
 }
+
+/* RENDER EMPLOYEES */
 
 function renderEmployees(data){
 
@@ -648,6 +660,8 @@ document.getElementById(
 
 }
 
+/* DELETE */
+
 function deleteEmployee(index){
 
 employees.splice(index,1);
@@ -660,6 +674,8 @@ JSON.stringify(employees)
 renderEmployees(employees);
 
 }
+
+/* EDIT */
 
 function editEmployee(index){
 
@@ -676,6 +692,8 @@ editIndex = index;
 
 }
 
+/* CLEAR FORM */
+
 function clearForm(){
 
 document.getElementById("empId").value = "";
@@ -686,6 +704,8 @@ document.getElementById("empPhone").value = "";
 document.getElementById("empPhoto").value = "";
 
 }
+
+/* FILTER */
 
 function filterEmployees(){
 
@@ -734,6 +754,8 @@ matchSalary;
 renderEmployees(filtered);
 
 }
+
+/* EXPORT */
 
 function exportEmployees(){
 
