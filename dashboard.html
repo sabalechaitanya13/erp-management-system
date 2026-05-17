@@ -144,16 +144,41 @@ border-radius:12px;
 
 <body id="body" style="display:none;">
 
-<script src="auth.js"></script>
-
 <script>
+
+/* GITHUB PAGES AUTH */
+
+const ERPAuth = {
+
+logout(){
+
+localStorage.removeItem(
+"erpUser"
+);
+
+window.location.href =
+"./index.html";
+
+},
+
+isAuthenticated(){
+
+return localStorage.getItem(
+"erpUser"
+) !== null;
+
+}
+
+};
+
+/* LOGIN CHECK */
 
 if(
 !ERPAuth.isAuthenticated()
 ){
 
 window.location.href =
-"index.html";
+"./index.html";
 
 }else{
 
@@ -451,6 +476,8 @@ const activityList =
 document.getElementById(
 "activityList"
 );
+
+activityList.innerHTML = "";
 
 if(employees.length === 0){
 
