@@ -96,6 +96,7 @@ margin-bottom:30px;
 background:rgba(255,255,255,0.12);
 padding:25px;
 border-radius:20px;
+backdrop-filter:blur(10px);
 }
 
 .summary-card h1{
@@ -108,6 +109,7 @@ background:rgba(255,255,255,0.12);
 padding:30px;
 border-radius:25px;
 margin-bottom:30px;
+backdrop-filter:blur(10px);
 }
 
 .form-grid{
@@ -162,7 +164,6 @@ background:#845ef7;
 table{
 width:100%;
 border-collapse:collapse;
-overflow-x:auto;
 }
 
 th,td{
@@ -231,6 +232,14 @@ display:block;
 overflow-x:auto;
 }
 
+.main{
+padding:20px;
+}
+
+.topbar h1{
+font-size:38px;
+}
+
 }
 
 </style>
@@ -243,17 +252,13 @@ overflow-x:auto;
 
 <script>
 
-if(
-!ERPAuth.isAuthenticated()
-){
+if(!ERPAuth.isAuthenticated()){
 
-window.location.href =
-"index.html";
+window.location.href = "index.html";
 
 }else{
 
-document.body.style.display =
-"block";
+document.body.style.display = "block";
 
 }
 
@@ -280,11 +285,8 @@ ERP System
 <a href="reports.html">📈 Reports</a>
 <a href="settings.html">⚙️ Settings</a>
 
-<a href="#"
-onclick="ERPAuth.logout()">
-
+<a href="#" onclick="ERPAuth.logout()">
 🚪 Logout
-
 </a>
 
 </div>
@@ -294,9 +296,7 @@ onclick="ERPAuth.logout()">
 <div class="main">
 
 <div class="topbar">
-
 <h1>Payroll Management</h1>
-
 </div>
 
 <input
@@ -392,8 +392,7 @@ Export JSON
 
 </div>
 
-<div class="salary-slip"
-id="salarySlip">
+<div class="salary-slip" id="salarySlip">
 
 <h1>Salary Slip</h1>
 
@@ -496,12 +495,10 @@ let editIndex = -1;
 function generateSlip(){
 
 const name =
-document.getElementById("empName")
-.value.trim();
+document.getElementById("empName").value.trim();
 
 const dept =
-document.getElementById("empDept")
-.value.trim();
+document.getElementById("empDept").value.trim();
 
 const basic =
 Number(document.getElementById("basicSalary").value);
@@ -515,11 +512,7 @@ Number(document.getElementById("bonus").value);
 const deduction =
 Number(document.getElementById("deductions").value);
 
-if(
-name === "" ||
-dept === "" ||
-basic <= 0
-){
+if(name === "" || dept === "" || basic <= 0){
 
 alert("Please Fill Required Fields");
 return;
@@ -581,6 +574,7 @@ const table =
 document.getElementById("payrollTable");
 
 table.innerHTML = `
+
 <tr>
 <th>Employee</th>
 <th>Department</th>
@@ -588,6 +582,7 @@ table.innerHTML = `
 <th>Date</th>
 <th>Actions</th>
 </tr>
+
 `;
 
 let totalPayroll = 0;
@@ -654,8 +649,7 @@ document.getElementById("otTotal")
 
 function editPayroll(index){
 
-const payroll =
-payrollHistory[index];
+const payroll = payrollHistory[index];
 
 document.getElementById("empName").value = payroll.name;
 document.getElementById("empDept").value = payroll.dept;
