@@ -1,100 +1,57 @@
-(function () {
-
 const ERPAuth = {
 
-login(email, password) {
+login(email,password){
 
-if (
+if(
 email === "admin@erp.com" &&
 password === "admin123"
-) {
-
-const user = {
-
-name: "Administrator",
-email: "admin@erp.com",
-role: "ADMIN"
-
-};
+){
 
 localStorage.setItem(
 "erpUser",
-JSON.stringify(user)
+JSON.stringify({
+email:email
+})
 );
 
 window.location.href =
-"dashboard.html";
+"./dashboard.html";
 
-} else {
+}else{
 
-alert("Invalid Credentials");
+const error =
+document.getElementById(
+"errorText"
+);
+
+if(error){
+
+error.innerText =
+"Invalid Email or Password";
+
+}
 
 }
 
 },
 
-logout() {
+logout(){
 
 localStorage.removeItem(
 "erpUser"
 );
 
 window.location.href =
-"index.html";
+"./index.html";
 
 },
 
-isAuthenticated() {
+isAuthenticated(){
 
-return !!localStorage.getItem(
+return localStorage.getItem(
 "erpUser"
-);
-
-},
-
-checkAuth() {
-
-const protectedPages = [
-
-"dashboard.html",
-"employees.html",
-"attendance.html",
-"payroll.html",
-"inventory.html",
-"purchase.html",
-"expenses.html",
-"reports.html",
-"settings.html",
-"leaves.html"
-
-];
-
-const currentPage =
-window.location.pathname
-.split("/")
-.pop();
-
-const isLoggedIn =
-localStorage.getItem(
-"erpUser"
-);
-
-if (
-protectedPages.includes(currentPage) &&
-!isLoggedIn
-) {
-
-window.location.href =
-"index.html";
-
-}
+) !== null;
 
 }
 
 };
-
-window.ERPAuth = ERPAuth;
-
-ERPAuth.checkAuth();
-
-})();
