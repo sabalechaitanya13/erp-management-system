@@ -3,7 +3,7 @@
 A complete, production-ready Enterprise Resource Planning (ERP) system built with Spring Boot and modern frontend technologies. Designed for 40-50 employee companies with premium glassmorphism UI.
 
 ## Live Website -
-https://sabalechaitanya13.github.io/erp-management-system/dashboard.html
+https://sabalechaitanya13.github.io/erp-management-system/login.html
 
 ## Features
 
