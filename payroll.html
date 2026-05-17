@@ -34,6 +34,7 @@ background:linear-gradient(135deg,#111,#222);
 
 .container{
 display:flex;
+flex-wrap:wrap;
 }
 
 .sidebar{
@@ -81,6 +82,7 @@ border:none;
 border-radius:14px;
 margin-bottom:30px;
 font-size:16px;
+outline:none;
 }
 
 .summary-grid{
@@ -125,11 +127,12 @@ padding:18px;
 border:none;
 border-radius:14px;
 font-size:16px;
+outline:none;
 }
 
 button{
 margin-top:25px;
-padding:16px 28px;
+padding:14px 24px;
 border:none;
 border-radius:14px;
 background:#57cc99;
@@ -137,15 +140,29 @@ color:white;
 cursor:pointer;
 font-size:16px;
 margin-right:10px;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.03);
 }
 
 .export-btn{
 background:#4dabf7;
 }
 
+.delete-btn{
+background:#ff4d6d;
+}
+
+.edit-btn{
+background:#845ef7;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
+overflow-x:auto;
 }
 
 th,td{
@@ -178,13 +195,51 @@ color:green;
 margin-top:20px;
 }
 
+@media(max-width:1100px){
+
+.summary-grid{
+grid-template-columns:1fr 1fr;
+}
+
+}
+
+@media(max-width:900px){
+
+.container{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+min-height:auto;
+}
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.summary-grid{
+grid-template-columns:1fr;
+}
+
+.search-box{
+width:100%;
+}
+
+table{
+display:block;
+overflow-x:auto;
+}
+
+}
+
 </style>
 
 </head>
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -193,7 +248,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -215,23 +270,14 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
 <a href="#"
@@ -336,6 +382,14 @@ Download PDF
 
 </button>
 
+<button
+class="export-btn"
+onclick="exportPayroll()">
+
+Export JSON
+
+</button>
+
 </div>
 
 <div class="salary-slip"
@@ -394,13 +448,11 @@ Net Salary:
 <table id="payrollTable">
 
 <tr>
-
 <th>Employee</th>
 <th>Department</th>
 <th>Net Salary</th>
 <th>Date</th>
 <th>Actions</th>
-
 </tr>
 
 </table>
@@ -416,23 +468,19 @@ Net Salary:
 window.onload = function(){
 
 loadTheme();
+renderPayroll();
 
 };
 
 function loadTheme(){
 
 const darkMode =
-localStorage.getItem(
-"darkMode"
-);
+localStorage.getItem("darkMode");
 
 if(darkMode === "true"){
 
-document.getElementById(
-"body"
-).classList.add(
-"dark-mode"
-);
+document.getElementById("body")
+.classList.add("dark-mode");
 
 }
 
@@ -440,54 +488,32 @@ document.getElementById(
 
 let payrollHistory =
 JSON.parse(
-localStorage.getItem(
-"payrollHistory"
-)
+localStorage.getItem("payrollHistory")
 ) || [];
 
 let editIndex = -1;
 
-renderPayroll();
-
 function generateSlip(){
 
 const name =
-document.getElementById(
-"empName"
-).value.trim();
+document.getElementById("empName")
+.value.trim();
 
 const dept =
-document.getElementById(
-"empDept"
-).value.trim();
+document.getElementById("empDept")
+.value.trim();
 
 const basic =
-Number(
-document.getElementById(
-"basicSalary"
-).value
-);
+Number(document.getElementById("basicSalary").value);
 
 const ot =
-Number(
-document.getElementById(
-"otAmount"
-).value
-);
+Number(document.getElementById("otAmount").value);
 
 const bonus =
-Number(
-document.getElementById(
-"bonus"
-).value
-);
+Number(document.getElementById("bonus").value);
 
 const deduction =
-Number(
-document.getElementById(
-"deductions"
-).value
-);
+Number(document.getElementById("deductions").value);
 
 if(
 name === "" ||
@@ -495,10 +521,7 @@ dept === "" ||
 basic <= 0
 ){
 
-alert(
-"Please Fill All Required Fields"
-);
-
+alert("Please Fill Required Fields");
 return;
 
 }
@@ -509,37 +532,14 @@ basic + ot + bonus - deduction;
 const currentDate =
 new Date().toLocaleDateString();
 
-document.getElementById(
-"slipName"
-).innerText = name;
-
-document.getElementById(
-"slipDept"
-).innerText = dept;
-
-document.getElementById(
-"slipDate"
-).innerText = currentDate;
-
-document.getElementById(
-"slipBasic"
-).innerText = basic;
-
-document.getElementById(
-"slipOT"
-).innerText = ot;
-
-document.getElementById(
-"slipBonus"
-).innerText = bonus;
-
-document.getElementById(
-"slipDeduction"
-).innerText = deduction;
-
-document.getElementById(
-"slipNetSalary"
-).innerText = netSalary;
+document.getElementById("slipName").innerText = name;
+document.getElementById("slipDept").innerText = dept;
+document.getElementById("slipDate").innerText = currentDate;
+document.getElementById("slipBasic").innerText = basic;
+document.getElementById("slipOT").innerText = ot;
+document.getElementById("slipBonus").innerText = bonus;
+document.getElementById("slipDeduction").innerText = deduction;
+document.getElementById("slipNetSalary").innerText = netSalary;
 
 const payrollData = {
 
@@ -556,15 +556,11 @@ currentDate
 
 if(editIndex === -1){
 
-payrollHistory.push(
-payrollData
-);
+payrollHistory.push(payrollData);
 
 }else{
 
-payrollHistory[editIndex] =
-payrollData;
-
+payrollHistory[editIndex] = payrollData;
 editIndex = -1;
 
 }
@@ -575,7 +571,6 @@ JSON.stringify(payrollHistory)
 );
 
 renderPayroll();
-
 clearForm();
 
 }
@@ -583,19 +578,15 @@ clearForm();
 function renderPayroll(){
 
 const table =
-document.getElementById(
-"payrollTable"
-);
+document.getElementById("payrollTable");
 
 table.innerHTML = `
 <tr>
-
 <th>Employee</th>
 <th>Department</th>
 <th>Net Salary</th>
 <th>Date</th>
 <th>Actions</th>
-
 </tr>
 `;
 
@@ -605,14 +596,9 @@ let totalOT = 0;
 
 payrollHistory.forEach((payroll,index)=>{
 
-totalPayroll +=
-payroll.netSalary;
-
-totalBonus +=
-payroll.bonus;
-
-totalOT +=
-payroll.ot;
+totalPayroll += payroll.netSalary;
+totalBonus += payroll.bonus;
+totalOT += payroll.ot;
 
 table.innerHTML += `
 
@@ -629,6 +615,7 @@ table.innerHTML += `
 <td>
 
 <button
+class="edit-btn"
 onclick="editPayroll(${index})">
 
 Edit
@@ -636,6 +623,7 @@ Edit
 </button>
 
 <button
+class="delete-btn"
 onclick="deletePayroll(${index})">
 
 Delete
@@ -650,25 +638,17 @@ Delete
 
 });
 
-document.getElementById(
-"totalPayroll"
-).innerText =
-"₹" + totalPayroll;
+document.getElementById("totalPayroll")
+.innerText = "₹" + totalPayroll;
 
-document.getElementById(
-"employeeCount"
-).innerText =
-payrollHistory.length;
+document.getElementById("employeeCount")
+.innerText = payrollHistory.length;
 
-document.getElementById(
-"bonusTotal"
-).innerText =
-"₹" + totalBonus;
+document.getElementById("bonusTotal")
+.innerText = "₹" + totalBonus;
 
-document.getElementById(
-"otTotal"
-).innerText =
-"₹" + totalOT;
+document.getElementById("otTotal")
+.innerText = "₹" + totalOT;
 
 }
 
@@ -677,35 +657,12 @@ function editPayroll(index){
 const payroll =
 payrollHistory[index];
 
-document.getElementById(
-"empName"
-).value =
-payroll.name;
-
-document.getElementById(
-"empDept"
-).value =
-payroll.dept;
-
-document.getElementById(
-"basicSalary"
-).value =
-payroll.basic;
-
-document.getElementById(
-"otAmount"
-).value =
-payroll.ot;
-
-document.getElementById(
-"bonus"
-).value =
-payroll.bonus;
-
-document.getElementById(
-"deductions"
-).value =
-payroll.deduction;
+document.getElementById("empName").value = payroll.name;
+document.getElementById("empDept").value = payroll.dept;
+document.getElementById("basicSalary").value = payroll.basic;
+document.getElementById("otAmount").value = payroll.ot;
+document.getElementById("bonus").value = payroll.bonus;
+document.getElementById("deductions").value = payroll.deduction;
 
 editIndex = index;
 
@@ -718,12 +675,7 @@ behavior:"smooth"
 
 function deletePayroll(index){
 
-const confirmDelete =
-confirm(
-"Delete Payroll Record?"
-);
-
-if(confirmDelete){
+if(confirm("Delete Payroll Record?")){
 
 payrollHistory.splice(index,1);
 
@@ -740,43 +692,23 @@ renderPayroll();
 
 function clearForm(){
 
-document.getElementById(
-"empName"
-).value = "";
-
-document.getElementById(
-"empDept"
-).value = "";
-
-document.getElementById(
-"basicSalary"
-).value = "";
-
-document.getElementById(
-"otAmount"
-).value = "";
-
-document.getElementById(
-"bonus"
-).value = "";
-
-document.getElementById(
-"deductions"
-).value = "";
+document.getElementById("empName").value = "";
+document.getElementById("empDept").value = "";
+document.getElementById("basicSalary").value = "";
+document.getElementById("otAmount").value = "";
+document.getElementById("bonus").value = "";
+document.getElementById("deductions").value = "";
 
 }
 
 function searchPayroll(){
 
 const value =
-document.getElementById(
-"searchPayroll"
-).value.toLowerCase();
+document.getElementById("searchPayroll")
+.value.toLowerCase();
 
 const rows =
-document.querySelectorAll(
-"#payrollTable tr"
-);
+document.querySelectorAll("#payrollTable tr");
 
 rows.forEach((row,index)=>{
 
@@ -798,21 +730,53 @@ text.includes(value)
 
 function downloadPDF(){
 
-const element =
-document.getElementById(
-"salarySlip"
-);
-
 const employeeName =
-document.getElementById(
-"slipName"
-).innerText;
+document.getElementById("slipName")
+.innerText;
+
+if(employeeName === ""){
+
+alert("Generate Salary Slip First");
+return;
+
+}
+
+const element =
+document.getElementById("salarySlip");
 
 html2pdf()
 .from(element)
-.save(
-employeeName + "-salary-slip.pdf"
+.save(employeeName + "-salary-slip.pdf");
+
+}
+
+function exportPayroll(){
+
+const dataStr =
+"data:text/json;charset=utf-8," +
+
+encodeURIComponent(
+JSON.stringify(payrollHistory,null,2)
 );
+
+const downloadAnchor =
+document.createElement("a");
+
+downloadAnchor.setAttribute(
+"href",
+dataStr
+);
+
+downloadAnchor.setAttribute(
+"download",
+"payroll-history.json"
+);
+
+document.body.appendChild(downloadAnchor);
+
+downloadAnchor.click();
+
+downloadAnchor.remove();
 
 }
 
