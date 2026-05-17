@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Reports & Analytics</title>
 
@@ -85,6 +84,7 @@ margin-bottom:30px;
 background:rgba(255,255,255,0.12);
 padding:25px;
 border-radius:20px;
+backdrop-filter:blur(10px);
 }
 
 .summary-card h2{
@@ -107,6 +107,7 @@ margin-bottom:30px;
 background:rgba(255,255,255,0.12);
 padding:30px;
 border-radius:25px;
+backdrop-filter:blur(10px);
 }
 
 .chart-card h2{
@@ -123,6 +124,7 @@ border-radius:20px;
 background:rgba(255,255,255,0.12);
 padding:30px;
 border-radius:25px;
+backdrop-filter:blur(10px);
 }
 
 .report-btn{
@@ -135,6 +137,11 @@ font-size:16px;
 cursor:pointer;
 margin-right:10px;
 margin-top:20px;
+transition:0.3s;
+}
+
+.report-btn:hover{
+transform:scale(1.03);
 }
 
 .export-btn{
@@ -148,13 +155,50 @@ background:rgba(255,255,255,0.08);
 border-radius:12px;
 }
 
+@media(max-width:1200px){
+
+.summary-grid{
+grid-template-columns:1fr 1fr;
+}
+
+.chart-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:900px){
+
+.container{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+min-height:auto;
+}
+
+.summary-grid{
+grid-template-columns:1fr;
+}
+
+.main{
+padding:20px;
+}
+
+.topbar h1{
+font-size:40px;
+}
+
+}
+
 </style>
 
 </head>
 
 <body id="body" style="display:none;">
 
-<script src="../js/auth.js"></script>
+<script src="auth.js"></script>
 
 <script>
 
@@ -163,7 +207,7 @@ if(
 ){
 
 window.location.href =
-"login.html";
+"index.html";
 
 }else{
 
@@ -185,23 +229,14 @@ ERP System
 <div class="menu">
 
 <a href="dashboard.html">📊 Dashboard</a>
-
 <a href="employees.html">👥 Employees</a>
-
 <a href="attendance.html">🕒 Attendance</a>
-
 <a href="leaves.html">🏖 Leave Management</a>
-
 <a href="payroll.html">💰 Payroll</a>
-
 <a href="inventory.html">📦 Inventory</a>
-
 <a href="purchase.html">🛒 Purchase</a>
-
 <a href="expenses.html">💳 Expenses</a>
-
 <a href="reports.html">📈 Reports</a>
-
 <a href="settings.html">⚙️ Settings</a>
 
 <a href="#"
@@ -251,7 +286,7 @@ onclick="ERPAuth.logout()">
 
 <div class="chart-card">
 
-<h2>Expense Report</h2>
+<h2>Expense Analytics</h2>
 
 <canvas id="expenseChart"></canvas>
 
@@ -259,7 +294,7 @@ onclick="ERPAuth.logout()">
 
 <div class="chart-card">
 
-<h2>Purchase Report</h2>
+<h2>Purchase Analytics</h2>
 
 <canvas id="purchaseChart"></canvas>
 
@@ -302,86 +337,67 @@ Export ERP Data
 window.onload = function(){
 
 loadTheme();
+loadReports();
 
 };
 
 function loadTheme(){
 
 const darkMode =
-localStorage.getItem(
-"darkMode"
-);
+localStorage.getItem("darkMode");
 
 if(darkMode === "true"){
 
-document.getElementById(
-"body"
-).classList.add(
-"dark-mode"
-);
+document.getElementById("body")
+.classList.add("dark-mode");
 
 }
 
 }
+
+function loadReports(){
 
 const employees =
-JSON.parse(
-localStorage.getItem("employees")
-) || [];
+JSON.parse(localStorage.getItem("employees")) || [];
 
 const purchases =
-JSON.parse(
-localStorage.getItem("purchases")
-) || [];
+JSON.parse(localStorage.getItem("purchases")) || [];
 
 const expenses =
-JSON.parse(
-localStorage.getItem("expenses")
-) || [];
+JSON.parse(localStorage.getItem("expenses")) || [];
 
 const inventory =
-JSON.parse(
-localStorage.getItem("inventory")
-) || [];
+JSON.parse(localStorage.getItem("inventory")) || [];
 
-document.getElementById(
-"employeeCount"
-).innerText =
-employees.length;
+document.getElementById("employeeCount")
+.innerText = employees.length;
 
-document.getElementById(
-"purchaseCount"
-).innerText =
-purchases.length;
+document.getElementById("purchaseCount")
+.innerText = purchases.length;
 
 let totalExpense = 0;
 
 expenses.forEach((expense)=>{
 
-totalExpense +=
-Number(expense.amount);
+totalExpense += Number(expense.amount || 0);
 
 });
 
-document.getElementById(
-"expenseTotal"
-).innerText =
-"₹" + totalExpense;
+document.getElementById("expenseTotal")
+.innerText = "₹" + totalExpense;
 
 let inventoryValue = 0;
 
 inventory.forEach((item)=>{
 
 inventoryValue +=
-Number(item.qty) *
-Number(item.price);
+Number(item.qty || 0) *
+Number(item.price || 0);
 
 });
 
-document.getElementById(
-"inventoryValue"
-).innerText =
-"₹" + inventoryValue;
+document.getElementById("inventoryValue")
+.innerText = "₹" + inventoryValue;
 
 let approved = 0;
 let pending = 0;
@@ -404,9 +420,7 @@ rejected++;
 });
 
 new Chart(
-document.getElementById(
-"expenseChart"
-),
+document.getElementById("expenseChart"),
 {
 type:"bar",
 
@@ -460,9 +474,7 @@ cancelled++;
 });
 
 new Chart(
-document.getElementById(
-"purchaseChart"
-),
+document.getElementById("purchaseChart"),
 {
 type:"pie",
 
@@ -493,9 +505,42 @@ backgroundColor:[
 }
 );
 
+}
+
 function downloadFullReport(){
 
+const employees =
+JSON.parse(localStorage.getItem("employees")) || [];
+
+const purchases =
+JSON.parse(localStorage.getItem("purchases")) || [];
+
+const expenses =
+JSON.parse(localStorage.getItem("expenses")) || [];
+
+const inventory =
+JSON.parse(localStorage.getItem("inventory")) || [];
+
+let totalExpense = 0;
+
+expenses.forEach((expense)=>{
+
+totalExpense += Number(expense.amount || 0);
+
+});
+
+let inventoryValue = 0;
+
+inventory.forEach((item)=>{
+
+inventoryValue +=
+Number(item.qty || 0) *
+Number(item.price || 0);
+
+});
+
 let reportText = `
+
 ERP REPORT SUMMARY
 
 ====================
@@ -513,6 +558,9 @@ Inventory Value:
 ₹${inventoryValue}
 
 ====================
+
+Generated Successfully
+
 `;
 
 const blob =
@@ -532,9 +580,8 @@ link.download =
 
 link.click();
 
-document.getElementById(
-"reportActivity"
-).innerHTML += `
+document.getElementById("reportActivity")
+.innerHTML += `
 
 <div class="activity-item">
 
@@ -550,10 +597,17 @@ function exportAllData(){
 
 const allData = {
 
-employees,
-purchases,
-expenses,
-inventory
+employees:
+JSON.parse(localStorage.getItem("employees")) || [],
+
+purchases:
+JSON.parse(localStorage.getItem("purchases")) || [],
+
+expenses:
+JSON.parse(localStorage.getItem("expenses")) || [],
+
+inventory:
+JSON.parse(localStorage.getItem("inventory")) || []
 
 };
 
@@ -585,9 +639,8 @@ downloadAnchor.click();
 
 downloadAnchor.remove();
 
-document.getElementById(
-"reportActivity"
-).innerHTML += `
+document.getElementById("reportActivity")
+.innerHTML += `
 
 <div class="activity-item">
 
