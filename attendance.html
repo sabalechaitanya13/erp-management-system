@@ -55,6 +55,11 @@ border-radius:15px;
 background:rgba(255,255,255,0.08);
 color:white;
 text-decoration:none;
+transition:0.3s;
+}
+
+.menu a:hover{
+background:rgba(255,255,255,0.18);
 }
 
 .main{
@@ -78,6 +83,11 @@ margin-bottom:30px;
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:25px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
 }
 
 input{
@@ -144,16 +154,64 @@ font-weight:bold;
 
 <body id="body" style="display:none;">
 
-<script src="auth.js"></script>
-
 <script>
+
+/* GITHUB PAGES COMPATIBLE AUTH */
+
+const ERPAuth = {
+
+login(email,password){
+
+if(
+email === "admin@erp.com" &&
+password === "admin123"
+){
+
+localStorage.setItem(
+"erpUser",
+JSON.stringify({
+email:email
+})
+);
+
+window.location.href =
+"./dashboard.html";
+
+}else{
+
+alert("Invalid Login");
+
+}
+
+},
+
+logout(){
+
+localStorage.removeItem(
+"erpUser"
+);
+
+window.location.href =
+"./index.html";
+
+},
+
+isAuthenticated(){
+
+return localStorage.getItem(
+"erpUser"
+) !== null;
+
+}
+
+};
 
 if(
 !ERPAuth.isAuthenticated()
 ){
 
 window.location.href =
-"index.html";
+"./index.html";
 
 }else{
 
@@ -174,25 +232,25 @@ ERP System
 
 <div class="menu">
 
-<a href="dashboard.html">📊 Dashboard</a>
+<a href="./dashboard.html">📊 Dashboard</a>
 
-<a href="employees.html">👥 Employees</a>
+<a href="./employees.html">👥 Employees</a>
 
-<a href="attendance.html">🕒 Attendance</a>
+<a href="./attendance.html">🕒 Attendance</a>
 
-<a href="leaves.html">🏖 Leave Management</a>
+<a href="./leaves.html">🏖 Leave Management</a>
 
-<a href="payroll.html">💰 Payroll</a>
+<a href="./payroll.html">💰 Payroll</a>
 
-<a href="inventory.html">📦 Inventory</a>
+<a href="./inventory.html">📦 Inventory</a>
 
-<a href="purchase.html">🛒 Purchase</a>
+<a href="./purchase.html">🛒 Purchase</a>
 
-<a href="expenses.html">💳 Expenses</a>
+<a href="./expenses.html">💳 Expenses</a>
 
-<a href="reports.html">📈 Reports</a>
+<a href="./reports.html">📈 Reports</a>
 
-<a href="settings.html">⚙️ Settings</a>
+<a href="./settings.html">⚙️ Settings</a>
 
 <a href="#"
 onclick="ERPAuth.logout()">
@@ -257,7 +315,8 @@ onclick="ERPAuth.logout()">
 
 <div>
 <label>Status</label>
-<input type="text"
+<input
+type="text"
 id="attendanceStatus"
 placeholder="Present / Absent">
 </div>
@@ -349,15 +408,20 @@ empName === "" ||
 date === "" ||
 status === ""
 ){
+
 alert("Please fill all fields");
+
 return;
+
 }
 
 attendance.push({
+
 empName,
 date,
 status,
 ot
+
 });
 
 localStorage.setItem(
@@ -377,13 +441,17 @@ const table =
 document.getElementById("attendanceTable");
 
 table.innerHTML = `
+
 <tr>
+
 <th>Employee</th>
 <th>Date</th>
 <th>Status</th>
 <th>OT Hours</th>
 <th>Actions</th>
+
 </tr>
+
 `;
 
 let present = 0;
@@ -396,9 +464,13 @@ if(
 record.status.toLowerCase()
 === "present"
 ){
+
 present++;
+
 }else{
+
 absent++;
+
 }
 
 totalOT += Number(record.ot || 0);
@@ -443,19 +515,23 @@ Delete
 
 document.getElementById(
 "totalRecords"
-).innerText = attendance.length;
+).innerText =
+attendance.length;
 
 document.getElementById(
 "presentCount"
-).innerText = present;
+).innerText =
+present;
 
 document.getElementById(
 "absentCount"
-).innerText = absent;
+).innerText =
+absent;
 
 document.getElementById(
 "totalOT"
-).innerText = totalOT + "h";
+).innerText =
+totalOT + "h";
 
 }
 
@@ -474,10 +550,21 @@ renderAttendance();
 
 function clearForm(){
 
-document.getElementById("empName").value="";
-document.getElementById("attendanceDate").value="";
-document.getElementById("attendanceStatus").value="";
-document.getElementById("otHours").value="";
+document.getElementById(
+"empName"
+).value="";
+
+document.getElementById(
+"attendanceDate"
+).value="";
+
+document.getElementById(
+"attendanceStatus"
+).value="";
+
+document.getElementById(
+"otHours"
+).value="";
 
 }
 
